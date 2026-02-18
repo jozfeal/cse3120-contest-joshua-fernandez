@@ -1,0 +1,43 @@
+Microsoft (R) Macro Assembler (x64) Version 14.00.24210.0   02/18/26 14:51:32
+..\SourceFiles\main.asm					     Page 1 - 1
+
+
+				; AddTwo.asm - adds two 32-bit integers
+				; Chapter 3 example
+
+				.386
+..\SourceFiles\main.asm(4) : error A2008:syntax erro
+..\SourceFiles\main.asm(4) : error A2071:initializer magnitude too large for specified size
+				.model flat,stdcall
+..\SourceFiles\main.asm(5) : error A2008:syntax erro
+..\SourceFiles\main.asm(5) : error A2071:initializer magnitude too large for specified size
+				.stack 4096
+..\SourceFiles\main.asm(6) : error A2008:syntax erro
+..\SourceFiles\main.asm(6) : error A2071:initializer magnitude too large for specified size
+				ExitProcess PROTO, dwExitCode:DWORD
+..\SourceFiles\main.asm(7) : error A2008:syntax erro
+..\SourceFiles\main.asm(7) : error A2071:initializer magnitude too large for specified size
+ 00000000			.code
+ 00000000			main PROC
+ 00000000  B8 00000005		mov eax,5 ; move 5 to the eax register
+ 00000005  83 C0 06		add eax,6 ; add 6 to the eax register
+
+				INVOKE ExitProcess,0
+..\SourceFiles\main.asm(13) : error A2008:syntax erro
+..\SourceFiles\main.asm(13) : error A2071:initializer magnitude too large for specified size
+ 00000008			main ENDP
+				END main
+Microsoft (R) Macro Assembler (x64) Version 14.00.24210.0   02/18/26 14:51:32
+..\SourceFiles\main.asm					     Symbols 2 - 1
+
+
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+main . . . . . . . . . . . . . .	P 	 00000000 _TEXT	Length= 00000008 Public
+
+	   0 Warnings
+	   13 Errors
