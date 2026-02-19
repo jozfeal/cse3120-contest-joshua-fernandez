@@ -18,5 +18,8 @@
     <MASM Include="..\SourceFiles\main.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="..\SourceFiles\draw_manager.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

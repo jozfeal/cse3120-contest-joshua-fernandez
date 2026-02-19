@@ -6,7 +6,7 @@
 INCLUDE Irvine32.inc
 
 .data
-PumpkinBuffer BYTE 20, 11			; width, height of the image stored int the following addresses 
+PumpkinBuffer BYTE 20, 11			; width and height of the ascii art in buffer 
 	BYTE "           -.       ", 0
 	BYTE "         -@%        ", 0
 	BYTE "         =@#        ", 0
@@ -23,16 +23,16 @@ PumpkinBuffer BYTE 20, 11			; width, height of the image stored int the followin
 Draw PROC
 	mov ebx, 0
 	mov bl, PumpkinBuffer[0]		; store the width
+	inc ebx							; account for null termination
 	mov ecx, 0
 	mov cl, PumpkinBuffer[1]		; store the height (for the loop)
 	mov esi, 0
 	mov edx, OFFSET PumpkinBuffer	; point to buffer
 	add edx, 2
 	L1:
-		add edx, esi					; go down to corresponding line
 		call WriteString
 		call Crlf
-		add esi, ebx					; skip bytes using width
+		add edx, ebx				; skips to the next line for printing
 		loop L1
 	ret
 Draw ENDP

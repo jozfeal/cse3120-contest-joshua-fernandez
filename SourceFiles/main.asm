@@ -1,13 +1,15 @@
-.386
-.model flat,stdcall
-.stack 4096
+;.386
+;.model flat,stdcall
+;.stack 4096
+INCLUDE Irvine32.inc
+
 ExitProcess PROTO, dwExitCode:DWORD
+Draw PROTO
 
 .code
-main PROC
-	mov eax,5 ; move 5 to the eax register
-	add eax,6 ; add 6 to the eax register
+Main PROC
+	call Draw
+	INVOKE ExitProcess,0
+Main ENDP
 
-INVOKE ExitProcess,0
-main ENDP
-END main
+END Main
