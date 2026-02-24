@@ -1,12 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/18/26 19:34:16
-..\SourceFiles\draw_manager.asm				     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/23/26 22:57:59
+..\SourceFiles\main.asm					     Page 1 - 1
 
 
-				; draw_manager.asm
-				; Contains methods for drawing on the terminal
-				; Learnt how to use multiple files with this Stack Overflow post
-				; https://stackoverflow.com/questions/62618027/how-to-write-and-combine-multiple-source-files-for-a-project-in-masm
-
+				;.386
+				;.model flat,stdcall
+				;.stack 4096
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -26,85 +24,83 @@ Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/18/26 19:34:16
 			      C .LIST
 			      C 
 
+				ExitProcess PROTO, dwExitCode:DWORD
+				Draw PROTO
+
  00000000			.data
- 00000000 14 0B			PumpkinBuffer BYTE 20, 11			; width and height of the ascii art in buffer 
- 00000002  20 20 20 20 20		BYTE "           -.       ", 0
-	   20 20 20 20 20
-	   20 2D 2E 20 20
-	   20 20 20 20 20
-	   00
- 00000017  20 20 20 20 20		BYTE "         -@%        ", 0
-	   20 20 20 20 2D
-	   40 25 20 20 20
-	   20 20 20 20 20
-	   00
- 0000002C  20 20 20 20 20		BYTE "         =@#        ", 0
-	   20 20 20 20 3D
-	   40 23 20 20 20
-	   20 20 20 20 20
-	   00
- 00000041  20 20 20 3D 40		BYTE "   =@@@@@**@@@@@#   ", 0
-	   40 40 40 40 2A
-	   2A 40 40 40 40
-	   40 23 20 20 20
-	   00
- 00000056  20 20 25 40 40		BYTE "  %@@#*@@@@@@#*%@@  ", 0
-	   23 2A 40 40 40
-	   40 40 40 23 2A
-	   25 40 40 20 20
-	   00
- 0000006B  20 40 40 40 2B		BYTE " @@@+   -@@*   .@@@ ", 0
-	   20 20 20 2D 40
-	   40 2A 20 20 20
-	   2E 40 40 40 20
-	   00
- 00000080  20 40 40 40 40		BYTE " @@@@@@@@@@@@@@@@@@ ", 0
-	   40 40 40 40 40
-	   40 40 40 40 40
-	   40 40 40 40 20
-	   00
- 00000095  20 25 40 40 40		BYTE " %@@@@@@@-.#@@@@@@@ ", 0
-	   40 40 40 40 2D
-	   2E 23 40 40 40
-	   40 40 40 40 20
-	   00
- 000000AA  20 20 25 40 40		BYTE "  %@@@+-#%%%+:@@@@  ", 0
-	   40 2B 2D 23 25
-	   25 25 2B 3A 40
-	   40 40 40 20 20
-	   00
- 000000BF  20 20 20 2A 40		BYTE "   *@@@*    -@@@@   ", 0
-	   40 40 2A 20 20
-	   20 20 2D 40 40
-	   40 40 20 20 20
-	   00
- 000000D4  20 20 20 20 20		BYTE "      ........      ", 0
-	   20 2E 2E 2E 2E
-	   2E 2E 2E 2E 20
-	   20 20 20 20 20
-	   00
+ 00000000 5B 4E 61 6D 65	placeholderName BYTE "[Name]", 0
+	   5D 00
 
  00000000			.code
- 00000000			Draw PROC
- 00000000  BB 00000000			mov ebx, 0
- 00000005  8A 1D 00000000 R		mov bl, PumpkinBuffer[0]		; store the width
- 0000000B  43				inc ebx							; account for null termination
- 0000000C  B9 00000000			mov ecx, 0
- 00000011  8A 0D 00000001 R		mov cl, PumpkinBuffer[1]		; store the height (for the loop)
- 00000017  BE 00000000			mov esi, 0
- 0000001C  BA 00000000 R		mov edx, OFFSET PumpkinBuffer	; point to buffer
- 00000021  83 C2 02			add edx, 2
- 00000024				L1:
- 00000024  E8 00000000 E			call WriteString
- 00000029  E8 00000000 E			call Crlf
- 0000002E  03 D3				add edx, ebx				; skips to the next line for printing
- 00000030  E2 F2				loop L1
- 00000032  C3				ret
- 00000033			Draw ENDP
+ 00000000			Main PROC
+ 00000000  E8 00000000 E		call Draw
+ 00000005  B8 00000000 R		mov eax, OFFSET placeholderName			; Changed later for actual character name
+ 0000000A  E8 00000007			call PromptChoice
+					INVOKE ExitProcess,0
+ 00000016			Main ENDP
 
-				END
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/18/26 19:34:16
-..\SourceFiles\draw_manager.asm				     Symbols 2 - 1
+ 00000007			.data
+ 00000007 43 68 6F 6F 73	chooseActionMsg BYTE "Choose an action for [Name]:", 0	; Choices for the player to choose from
+	   65 20 61 6E 20
+	   61 63 74 69 6F
+	   6E 20 66 6F 72
+	   20 5B 4E 61 6D
+	   65 5D 3A 00
+ 00000024 31 2E 20 41 74	attackChoiceMsg BYTE "1. Attack", 0
+	   74 61 63 6B 00
+ 0000002E 32 2E 20 44 65	defendChoiceMsg BYTE "2. Defend", 0
+	   66 65 6E 64 00
+ 00000038 33 2E 20 53 70	spellChoiceMsg BYTE "3. Spell", 0
+	   65 6C 6C 00
+ 00000041 3E 20 00		promptSpaceMsg BYTE "> ", 0
+
+ 00000016			.code
+				; ------------------------------
+ 00000016			PromptChoice PROC USES edx
+				; Takes the offset of the character name in EAX
+				; Returns number of choice selected in EAX
+				; ------------------------------
+ 00000017  B6 18			mov dh, 24							; Starting row position of the prompt
+ 00000019  B2 00			mov dl, 0
+ 0000001B  E8 00000000 E		call GotoXY
+ 00000020  52				push edx							; Push edx to keep using original dh value
+ 00000021  BA 00000007 R		mov edx, OFFSET chooseActionMsg		; Write correspodning message
+ 00000026  E8 00000000 E		call WriteString
+ 0000002B  5A				pop edx								; Pop after writing to reuse dh value
+					
+ 0000002C  FE C6			inc dh								; inc dh to easily switch starting position with previous print
+ 0000002E  E8 00000000 E		call GotoXY
+ 00000033  52				push edx
+ 00000034  BA 00000024 R		mov edx, OFFSET attackChoiceMsg
+ 00000039  E8 00000000 E		call WriteString
+ 0000003E  5A				pop edx
+
+ 0000003F  FE C6			inc dh
+ 00000041  E8 00000000 E		call GotoXY
+ 00000046  52				push edx
+ 00000047  BA 0000002E R		mov edx, OFFSET defendChoiceMsg
+ 0000004C  E8 00000000 E		call WriteString
+ 00000051  5A				pop edx
+
+ 00000052  FE C6			inc dh
+ 00000054  E8 00000000 E		call GotoXY
+ 00000059  52				push edx
+ 0000005A  BA 00000038 R		mov edx, OFFSET spellChoiceMsg
+ 0000005F  E8 00000000 E		call WriteString
+ 00000064  5A				pop edx
+
+ 00000065  FE C6			inc dh
+ 00000067  E8 00000000 E		call GotoXY
+ 0000006C  BA 00000041 R		mov edx, OFFSET promptSpaceMsg		; no need to push since dh won't be reused
+ 00000071  E8 00000000 E		call WriteString
+ 00000076  E8 00000000 E		call ReadInt						; get user's input and store in eax
+
+					ret
+ 0000007D			PromptChoice ENDP
+
+				END Main
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/23/26 22:57:59
+..\SourceFiles\main.asm					     Symbols 2 - 1
 
 
 
@@ -197,8 +193,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000000E9 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000033 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000044 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000007D Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -212,8 +208,7 @@ CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Draw . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000033 Public STDCALL
-  L1 . . . . . . . . . . . . . .	L Near	 00000024 _TEXT	
+Draw . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -248,6 +243,7 @@ HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000016 Public STDCALL
 MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -255,6 +251,7 @@ OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PromptChoice . . . . . . . . . .	P Near	 00000016 _TEXT	Length= 00000067 Public STDCALL
 Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -430,7 +427,6 @@ NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
-PumpkinBuffer  . . . . . . . . .	Byte	 00000000 _DATA	
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
 ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
@@ -526,10 +522,13 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+attackChoiceMsg  . . . . . . . .	Byte	 00000024 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+chooseActionMsg  . . . . . . . .	Byte	 00000007 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+defendChoiceMsg  . . . . . . . .	Byte	 0000002E _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
@@ -540,7 +539,10 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+placeholderName  . . . . . . . .	Byte	 00000000 _DATA	
+promptSpaceMsg . . . . . . . . .	Byte	 00000041 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+spellChoiceMsg . . . . . . . . .	Byte	 00000038 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
