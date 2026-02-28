@@ -5,6 +5,7 @@ INCLUDE Irvine32.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
 Draw PROTO
+Attack PROTO
 
 .data
 placeholderName BYTE "[Name]", 0
@@ -14,6 +15,11 @@ Main PROC
 	call Draw
 	mov eax, OFFSET placeholderName			; Changed later for actual character name
 	call PromptChoice
+
+	.IF (eax == 1)
+		call Attack
+	.ENDIF
+
 	INVOKE ExitProcess,0
 Main ENDP
 
