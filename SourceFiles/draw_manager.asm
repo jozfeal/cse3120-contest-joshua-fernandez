@@ -27,6 +27,9 @@ Draw PROC USES ebx ecx esi
 ; Takes no parameters
 ; Draws a pumpkin on the screen
 ; ------------------------------
+	mov dx, 0
+	call Gotoxy						; moving the cursor back to the top for drawing
+
 	mov ebx, 0
 	mov bl, PumpkinBuffer[0]		; store the width
 	inc ebx							; account for null termination
