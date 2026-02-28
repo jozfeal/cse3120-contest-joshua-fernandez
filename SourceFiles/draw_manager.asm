@@ -6,6 +6,8 @@
 INCLUDE Irvine32.inc
 
 .data
+dashedLine BYTE 120 DUP("-"), 0		; as long as the default window opening size
+
 PumpkinBuffer BYTE 20, 11			; width and height of the ascii art in buffer 
 	BYTE "           -.       ", 0
 	BYTE "         -@%        ", 0
@@ -20,7 +22,11 @@ PumpkinBuffer BYTE 20, 11			; width and height of the ascii art in buffer
 	BYTE "      ........      ", 0
 
 .code
-Draw PROC
+; ------------------------------
+Draw PROC USES ebx ecx esi
+; Takes no parameters
+; Draws a pumpkin on the screen
+; ------------------------------
 	mov ebx, 0
 	mov bl, PumpkinBuffer[0]		; store the width
 	inc ebx							; account for null termination
@@ -36,5 +42,21 @@ Draw PROC
 		loop L1
 	ret
 Draw ENDP
+
+; ------------------------------
+ResetScreen PROC USES edx
+; Does not take any parameters
+; Clears the screen and prints
+; the template for the game UI
+; ------------------------------
+	call Clrscr
+	mov dh, 23
+	mov dl, 0
+	call Gotoxy
+	mov edx, OFFSET dashedLine
+	call WriteString					; puts a dashed line to divide game screen and prompt screen
+
+	ret
+ResetScreen ENDP
 
 END

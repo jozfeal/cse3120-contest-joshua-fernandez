@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/28/26 15:26:00
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/28/26 16:42:13
 ..\SourceFiles\main.asm					     Page 1 - 1
 
 
@@ -25,6 +25,7 @@ Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/28/26 15:26:00
 			      C 
 
 				ExitProcess PROTO, dwExitCode:DWORD
+				ResetScreen PROTO
 				Draw PROTO
 				Attack PROTO
 
@@ -34,16 +35,19 @@ Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/28/26 15:26:00
 
  00000000			.code
  00000000			Main PROC
- 00000000  E8 00000000 E		call Draw
- 00000005  B8 00000000 R		mov eax, OFFSET placeholderName			; Changed later for actual character name
- 0000000A  E8 00000011			call PromptChoice
+ 00000000  E8 00000000 E		call ResetScreen
+ 00000005  66| BA 0000			mov dx, 0
+ 00000009  E8 00000000 E		call Gotoxy								; moving the cursor back to the top for drawing
+ 0000000E  E8 00000000 E		call Draw
+ 00000013  B8 00000000 R		mov eax, OFFSET placeholderName			; Changed later for actual character name
+ 00000018  E8 00000011			call PromptChoice
 
 					.IF (eax == 1)
- 00000014  E8 00000000 E			call Attack
+ 00000022  E8 00000000 E			call Attack
 					.ENDIF
 
 					INVOKE ExitProcess,0
- 00000020			Main ENDP
+ 0000002E			Main ENDP
 
  00000007			.data
  00000007 43 68 6F 6F 73	chooseActionMsg BYTE "Choose an action for [Name]:", 0	; Choices for the player to choose from
@@ -60,52 +64,52 @@ Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/28/26 15:26:00
 	   65 6C 6C 00
  00000041 3E 20 00		promptSpaceMsg BYTE "> ", 0
 
- 00000020			.code
+ 0000002E			.code
 				; ------------------------------
- 00000020			PromptChoice PROC USES edx
+ 0000002E			PromptChoice PROC USES edx
 				; Takes the offset of the character name in EAX
 				; Returns number of choice selected in EAX
 				; ------------------------------
- 00000021  B6 18			mov dh, 24							; Starting row position of the prompt
- 00000023  B2 00			mov dl, 0
- 00000025  E8 00000000 E		call GotoXY
- 0000002A  52				push edx							; Push edx to keep using original dh value
- 0000002B  BA 00000007 R		mov edx, OFFSET chooseActionMsg		; Write correspodning message
- 00000030  E8 00000000 E		call WriteString
- 00000035  5A				pop edx								; Pop after writing to reuse dh value
+ 0000002F  B6 18			mov dh, 24							; Starting row position of the prompt
+ 00000031  B2 00			mov dl, 0
+ 00000033  E8 00000000 E		call GotoXY
+ 00000038  52				push edx							; Push edx to keep using original dh value
+ 00000039  BA 00000007 R		mov edx, OFFSET chooseActionMsg		; Write correspodning message
+ 0000003E  E8 00000000 E		call WriteString
+ 00000043  5A				pop edx								; Pop after writing to reuse dh value
 					
- 00000036  FE C6			inc dh								; inc dh to easily switch starting position with previous print
- 00000038  E8 00000000 E		call GotoXY
- 0000003D  52				push edx
- 0000003E  BA 00000024 R		mov edx, OFFSET attackChoiceMsg
- 00000043  E8 00000000 E		call WriteString
- 00000048  5A				pop edx
+ 00000044  FE C6			inc dh								; inc dh to easily switch starting position with previous print
+ 00000046  E8 00000000 E		call GotoXY
+ 0000004B  52				push edx
+ 0000004C  BA 00000024 R		mov edx, OFFSET attackChoiceMsg
+ 00000051  E8 00000000 E		call WriteString
+ 00000056  5A				pop edx
 
- 00000049  FE C6			inc dh
- 0000004B  E8 00000000 E		call GotoXY
- 00000050  52				push edx
- 00000051  BA 0000002E R		mov edx, OFFSET defendChoiceMsg
- 00000056  E8 00000000 E		call WriteString
- 0000005B  5A				pop edx
+ 00000057  FE C6			inc dh
+ 00000059  E8 00000000 E		call GotoXY
+ 0000005E  52				push edx
+ 0000005F  BA 0000002E R		mov edx, OFFSET defendChoiceMsg
+ 00000064  E8 00000000 E		call WriteString
+ 00000069  5A				pop edx
 
- 0000005C  FE C6			inc dh
- 0000005E  E8 00000000 E		call GotoXY
- 00000063  52				push edx
- 00000064  BA 00000038 R		mov edx, OFFSET spellChoiceMsg
- 00000069  E8 00000000 E		call WriteString
- 0000006E  5A				pop edx
+ 0000006A  FE C6			inc dh
+ 0000006C  E8 00000000 E		call GotoXY
+ 00000071  52				push edx
+ 00000072  BA 00000038 R		mov edx, OFFSET spellChoiceMsg
+ 00000077  E8 00000000 E		call WriteString
+ 0000007C  5A				pop edx
 
- 0000006F  FE C6			inc dh
- 00000071  E8 00000000 E		call GotoXY
- 00000076  BA 00000041 R		mov edx, OFFSET promptSpaceMsg		; no need to push since dh won't be reused
- 0000007B  E8 00000000 E		call WriteString
- 00000080  E8 00000000 E		call ReadInt						; get user's input and store in eax
+ 0000007D  FE C6			inc dh
+ 0000007F  E8 00000000 E		call GotoXY
+ 00000084  BA 00000041 R		mov edx, OFFSET promptSpaceMsg		; no need to push since dh won't be reused
+ 00000089  E8 00000000 E		call WriteString
+ 0000008E  E8 00000000 E		call ReadInt						; get user's input and store in eax
 
 					ret
- 00000087			PromptChoice ENDP
+ 00000095			PromptChoice ENDP
 
 				END Main
-Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/28/26 15:26:00
+Microsoft (R) Macro Assembler Version 14.00.24210.0	    02/28/26 16:42:13
 ..\SourceFiles\main.asm					     Symbols 2 - 1
 
 
@@ -200,7 +204,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000044 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000087 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000095 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -250,7 +254,7 @@ HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000020 Public STDCALL
+Main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002E Public STDCALL
 MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -258,7 +262,7 @@ OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-PromptChoice . . . . . . . . . .	P Near	 00000020 _TEXT	Length= 00000067 Public STDCALL
+PromptChoice . . . . . . . . . .	P Near	 0000002E _TEXT	Length= 00000067 Public STDCALL
 Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -274,6 +278,7 @@ ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ResetScreen  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL

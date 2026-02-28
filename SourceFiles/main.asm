@@ -4,6 +4,7 @@
 INCLUDE Irvine32.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
+ResetScreen PROTO
 Draw PROTO
 Attack PROTO
 
@@ -12,6 +13,9 @@ placeholderName BYTE "[Name]", 0
 
 .code
 Main PROC
+	call ResetScreen
+	mov dx, 0
+	call Gotoxy								; moving the cursor back to the top for drawing
 	call Draw
 	mov eax, OFFSET placeholderName			; Changed later for actual character name
 	call PromptChoice
