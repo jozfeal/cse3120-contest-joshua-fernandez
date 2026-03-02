@@ -13,16 +13,23 @@ placeholderName BYTE "[Name]", 0
 
 .code
 Main PROC
-	call ResetScreen
-	call Draw
-	mov eax, OFFSET placeholderName			; Changed later for actual character name
-	call PromptChoice
-
-	.IF (eax == 1)
+	.REPEAT
 		call ResetScreen
 		call Draw
-		call Attack
-	.ENDIF
+		mov eax, OFFSET placeholderName		; Changed later for actual character name
+		call PromptChoice
+	
+		.IF (eax == 1)						; 1 is the attack choice
+			call ResetScreen
+			call Draw
+			call Attack
+			stc
+		.ELSEIF (eax >= 4)					; force stop game with an invalid instruction
+			clc
+		.ELSE								; go to next turn in game
+			stc
+		.ENDIF
+	.UNTIL (!CARRY?)						; the carry flag is used as a boolean to know if combat should end
 
 	INVOKE ExitProcess,0
 Main ENDP
