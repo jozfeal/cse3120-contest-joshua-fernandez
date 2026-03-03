@@ -5,7 +5,7 @@ attackMsg BYTE "[Ally] attacked [Enemy] for [Dmg] damage!", 0
 
 .code
 ; ------------------------------
-Attack PROC USES edx
+Attack PROC USES edx eax
 ; Takes no parameters
 ; Displays an attack message with placeholder units and enemies
 ; ------------------------------
@@ -14,8 +14,7 @@ Attack PROC USES edx
 	call Gotoxy
 	mov edx, OFFSET attackMsg
 	call WriteString
-	call Crlf
-	call WaitMsg
+	call ReadInt					; waits for an enter before moving on
 	ret
 Attack ENDP
 
