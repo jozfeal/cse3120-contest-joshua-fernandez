@@ -1,3 +1,7 @@
 AssemblyContest.VC.VC.opendb
 AssemblyContest.VC.db
 Debug
+.vs/AssemblyContest/v14
+AssemblyContest/.vs/AssemblyContest/v14
+AssemblyContest/Debug
+*.lst
