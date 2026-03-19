@@ -21,7 +21,7 @@
     <MASM Include="..\SourceFiles\draw_manager.asm">
       <Filter>Source Files</Filter>
     </MASM>
-    <MASM Include="attack_manager.asm">
+    <MASM Include="..\SourceFiles\attack_manager.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>
