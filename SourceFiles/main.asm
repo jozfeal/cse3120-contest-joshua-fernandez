@@ -4,10 +4,9 @@
 INCLUDE Irvine32.inc
 INCLUDE Macros.inc
 INCLUDE AttackManager.inc
+INCLUDE DrawManager.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
-ResetScreen PROTO
-Draw PROTO
 
 .data
 placeholderName BYTE "[Name]", 0
