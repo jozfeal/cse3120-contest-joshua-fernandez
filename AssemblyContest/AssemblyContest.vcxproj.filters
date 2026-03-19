@@ -25,4 +25,9 @@
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SourceFiles\AttackManager.inc">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

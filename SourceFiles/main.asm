@@ -3,17 +3,17 @@
 ;.stack 4096
 INCLUDE Irvine32.inc
 INCLUDE Macros.inc
+INCLUDE AttackManager.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
 ResetScreen PROTO
 Draw PROTO
-Attack PROTO
 
 .data
 placeholderName BYTE "[Name]", 0
 
 .code
-Main PROC
+Main PROC PUBLIC
 	.REPEAT
 		call ResetScreen
 		call Draw
