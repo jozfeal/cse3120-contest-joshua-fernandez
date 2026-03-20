@@ -166,10 +166,12 @@
     <MASM Include="..\SourceFiles\main.asm">
       <FileType>Document</FileType>
     </MASM>
+    <MASM Include="..\SourceFiles\units.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\SourceFiles\AttackManager.inc" />
     <None Include="..\SourceFiles\DrawManager.inc" />
+    <None Include="..\SourceFiles\Units.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,6 +5,7 @@ INCLUDE Irvine32.inc
 INCLUDE Macros.inc
 INCLUDE AttackManager.inc
 INCLUDE DrawManager.inc
+INCLUDE Units.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
 
