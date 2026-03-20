@@ -11,3 +11,5 @@ Unit STRUCT
 	def BYTE 1				; defense
 	spe BYTE 1				; speed
 Unit ENDS
+
+InitializeUnits PROTO

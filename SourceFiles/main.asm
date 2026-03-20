@@ -14,6 +14,8 @@ placeholderName BYTE "[Name]", 0
 
 .code
 Main PROC PUBLIC
+	call InitializeUnits
+
 	.REPEAT
 		call ResetScreen
 		call Draw
