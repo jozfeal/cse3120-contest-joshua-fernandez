@@ -13,3 +13,6 @@ Unit STRUCT
 Unit ENDS
 
 InitializeUnits PROTO
+
+EXTERNDEF allies:Unit
+EXTERNDEF enemies:Unit

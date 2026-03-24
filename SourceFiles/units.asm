@@ -1,12 +1,29 @@
 .model flat,stdcall
 INCLUDE Units.inc
 
+; Macro to move a Unit to a position in either team
+; team = allies|enemies, pos = 0|1|2 
+mMoveUnit MACRO unit:REQ, team:REQ, pos:REQ
+	push esi
+	push edi
+	push ecx
+
+	mov esi, OFFSET unit				; move data from object instance
+	lea edi, team[pos * SIZEOF Unit]	; to corresponding place in Unit array
+	mov ecx, SIZEOF Unit
+	rep movsb
+
+	pop ecx
+	pop edi
+	pop esi
+ENDM
+
 ; Macro to make a new ally unit, places it in the corresponding position
 mAllyUnit MACRO objName:REQ, name:REQ, role:REQ, pos:REQ
 	.data
 	objName Unit <name, role>
 	.code
-	mov allies[pos * TYPE allies], OFFSET objName
+	mMoveUnit objName, allies, pos
 ENDM
 
 ; Macro to make a new enemy unit, places it in the corresponding position
@@ -14,12 +31,12 @@ mEnemyUnit MACRO objName:REQ, name:REQ, role:REQ, pos:REQ
 	.data
 	objName Unit <name, role>
 	.code
-	mov enemies[pos * TYPE enemies], OFFSET objName
+	mMoveUnit objName, enemies, pos
 ENDM
 
 .data
-allies DWORD 3 DUP(?)
-enemies DWORD 3 DUP(?)
+allies Unit 3 DUP (<>)
+enemies Unit 3 DUP(<>)
 
 .code
 InitializeUnits PROC
