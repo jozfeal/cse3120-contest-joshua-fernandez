@@ -9,10 +9,22 @@ INCLUDE Units.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
 
+BOXROW EQU 24	; start of player's input box
+
+; places the given char in front of the choice index when prompting
+mPlaceCharForChoice MACRO char:REQ, choice:REQ
+	push edx					; edx is used by mWrite so this is necessary to keep player choice
+	mov dh, BOXROW
+	add dh, choice
+	mGotoxy 0, dh				; moves cursor to current choice
+	mWrite char					; places given char
+	pop edx
+ENDM
+
 ; ENUM for player choices
-ATTACK EQU 0
-DEFEND EQU 1
-SPELL EQU 2
+ATTACK EQU 2	; starts at 2 because that is the line offset from BOXROW
+DEFEND EQU 3
+SPELL EQU 4
 
 ; keyboard scan codes for the directional arrow keys
 LEFT EQU 4Bh 
@@ -28,7 +40,7 @@ cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, l
 .code
 Main PROC PUBLIC
 	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
-	INVOKE SetConsoleCursorInfo, eax, ADDR cursorInfo	; Makes cursor invisible in cmd
+	INVOKE SetConsoleCursorInfo, eax, ADDR cursorInfo	; makes cursor invisible in cmd
 	
 	call InitializeUnits
 	
@@ -37,7 +49,7 @@ Main PROC PUBLIC
 		mGetUnitName allies, 0				; name of first ally unit
 		call PromptChoice
 	
-		.IF (al == 1)						; 1 is the attack choice
+		.IF (al == ATTACK)					; 1 is the attack choice
 			call ResetScreen
 			call AttackUnit
 			stc
@@ -56,7 +68,7 @@ PromptChoice PROC USES edx
 ; Takes the offset of the character name in EAX
 ; Returns number of choice selected in AL
 ; ------------------------------
-	mGotoxy 0, 24		; start of user entry box
+	mGotoxy 0, BOXROW	; start of user entry box
 	mWrite "Choose an action for "
 	mov edx, eax		; inserts character name for choice prompt
 	call WriteString
@@ -72,13 +84,18 @@ PromptChoice PROC USES edx
 		call ReadKey	; keyboard scan code is stored in AH
 		jz GetInput		; does nothing until user enters an input
 
-	cmp ah, DOWN
-	jne no
-	mov al, 1
-	jmp ended
-	no: 
-	mov al, 5
-	ended:
+	mPlaceCharForChoice " ", dl	; removes old player selection
+
+	.IF (ah == CONFIRM)			; returns current choice selection
+		mov al, 2
+		ret
+
+	.ELSEIF (ah == UP)
+		nop
+	.ENDIF
+
+	mPlaceCharForChoice ">", dl	; selcts new player choice
+
 	ret
 PromptChoice ENDP
 
