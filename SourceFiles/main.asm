@@ -9,6 +9,14 @@ INCLUDE Units.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
 
+; keyboard scan codes for the directional arrow keys
+LEFT = 4Bh 
+RIGHT = 4Dh 
+UP = 48h
+DOWN = 50h
+CONFIRM = 2Ch	; keyboard scan code for Z key
+ESCAPE = 27h	; keyboard scan code for Escape key
+
 .code
 Main PROC PUBLIC
 	call InitializeUnits
@@ -45,13 +53,13 @@ PromptChoice PROC USES edx
 	mWriteLn "  Attack"
 	mWriteLn "  Defend"
 	mWriteLn "  Spell"
-	GetInput:
-		mov eax, 10
+	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
+		mov eax, 10		; 10 ms delay between checks
 		call Delay
-		call ReadKey
-		jz GetInput
+		call ReadKey	; keyboard scan code is stored in AH
+		jz GetInput		; does nothing until user enters an input
 
-	cmp ah, 50h
+	cmp ah, DOWN
 	jne no
 	mov eax, 1
 	jmp ended
