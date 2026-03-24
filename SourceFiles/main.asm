@@ -42,12 +42,22 @@ PromptChoice PROC USES edx
 	mov edx, eax		; inserts character name for choice prompt
 	call WriteString
 	mWriteLn ":"
-	mWriteLn "1. Attack"
-	mWriteLn "2. Defend"
-	mWriteLn "3. Spell"
-	mWrite "> "
-	call ReadInt		; get user's input and store in eax
+	mWriteLn "  Attack"
+	mWriteLn "  Defend"
+	mWriteLn "  Spell"
+	GetInput:
+		mov eax, 10
+		call Delay
+		call ReadKey
+		jz GetInput
 
+	cmp ah, 50h
+	jne no
+	mov eax, 1
+	jmp ended
+	no: 
+	mov eax, 5
+	ended:
 	ret
 PromptChoice ENDP
 
