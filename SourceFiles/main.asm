@@ -9,9 +9,6 @@ INCLUDE Units.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
 
-.data
-placeholderName BYTE "[Name]", 0
-
 .code
 Main PROC PUBLIC
 	call InitializeUnits
@@ -43,7 +40,10 @@ PromptChoice PROC USES edx
 ; Returns number of choice selected in EAX
 ; ------------------------------
 	mGotoxy 0, 24		; start of user entry box
-	mWriteLn "Choose an action for [Name]:"
+	mWrite "Choose an action for "
+	mov edx, eax		; inserts character name for choice prompt
+	call WriteString
+	mWriteLn ":"
 	mWriteLn "1. Attack"
 	mWriteLn "2. Defend"
 	mWriteLn "3. Spell"
