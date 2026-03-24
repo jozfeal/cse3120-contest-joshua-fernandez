@@ -15,13 +15,13 @@ Main PROC PUBLIC
 	
 	.REPEAT
 		call ResetScreen
-		call Draw
+		;call Draw
 		mGetUnitName allies, 0				; name of first ally unit
 		call PromptChoice
 	
 		.IF (eax == 1)						; 1 is the attack choice
 			call ResetScreen
-			call Draw
+			;call Draw
 			call Attack
 			stc
 		.ELSEIF (eax >= 4)					; force stop game with an invalid instruction
