@@ -17,8 +17,14 @@ DOWN = 50h
 CONFIRM = 2Ch	; keyboard scan code for Z key
 ESCAPE = 27h	; keyboard scan code for Escape key
 
+.data
+cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, learnt in Ch 11.1.10
+
 .code
 Main PROC PUBLIC
+	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+	INVOKE SetConsoleCursorInfo, eax, ADDR cursorInfo	; Makes cursor invisible in cmd
+	
 	call InitializeUnits
 	
 	.REPEAT
@@ -26,11 +32,11 @@ Main PROC PUBLIC
 		mGetUnitName allies, 0				; name of first ally unit
 		call PromptChoice
 	
-		.IF (eax == 1)						; 1 is the attack choice
+		.IF (al == 1)						; 1 is the attack choice
 			call ResetScreen
 			call Attack
 			stc
-		.ELSEIF (eax >= 4)					; force stop game with an invalid instruction
+		.ELSEIF (al >= 4)					; force stop game with an invalid instruction
 			clc
 		.ELSE								; go to next turn in game
 			stc
@@ -43,14 +49,14 @@ Main ENDP
 ; ------------------------------
 PromptChoice PROC USES edx
 ; Takes the offset of the character name in EAX
-; Returns number of choice selected in EAX
+; Returns number of choice selected in AL
 ; ------------------------------
 	mGotoxy 0, 24		; start of user entry box
 	mWrite "Choose an action for "
 	mov edx, eax		; inserts character name for choice prompt
 	call WriteString
 	mWriteLn ":"
-	mWriteLn "  Attack"
+	mWriteLn "> Attack"
 	mWriteLn "  Defend"
 	mWriteLn "  Spell"
 	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
@@ -61,10 +67,10 @@ PromptChoice PROC USES edx
 
 	cmp ah, DOWN
 	jne no
-	mov eax, 1
+	mov al, 1
 	jmp ended
 	no: 
-	mov eax, 5
+	mov al, 5
 	ended:
 	ret
 PromptChoice ENDP
