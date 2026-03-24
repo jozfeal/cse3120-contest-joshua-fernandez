@@ -2,8 +2,8 @@
 INCLUDE Units.inc
 
 .data
-allies Unit 3 DUP (<>)
-enemies Unit 3 DUP(<>)
+allies UNIT 3 DUP (<>)
+enemies UNIT 3 DUP(<>)
 
 .code
 InitializeUnits PROC
