@@ -9,13 +9,18 @@ INCLUDE Units.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
 
+; ENUM for player choices
+ATTACK EQU 0
+DEFEND EQU 1
+SPELL EQU 2
+
 ; keyboard scan codes for the directional arrow keys
-LEFT = 4Bh 
-RIGHT = 4Dh 
-UP = 48h
-DOWN = 50h
-CONFIRM = 2Ch	; keyboard scan code for Z key
-ESCAPE = 27h	; keyboard scan code for Escape key
+LEFT EQU 4Bh 
+RIGHT EQU 4Dh 
+UP EQU 48h
+DOWN EQU 50h
+CONFIRM EQU 2Ch	; keyboard scan code for Z key
+ESCAPE EQU 27h	; keyboard scan code for Escape key
 
 .data
 cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, learnt in Ch 11.1.10
@@ -34,7 +39,7 @@ Main PROC PUBLIC
 	
 		.IF (al == 1)						; 1 is the attack choice
 			call ResetScreen
-			call Attack
+			call AttackUnit
 			stc
 		.ELSEIF (al >= 4)					; force stop game with an invalid instruction
 			clc
@@ -59,6 +64,8 @@ PromptChoice PROC USES edx
 	mWriteLn "> Attack"
 	mWriteLn "  Defend"
 	mWriteLn "  Spell"
+
+	mov dl, ATTACK		; default choice is attack
 	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
 		mov eax, 10		; 10 ms delay between checks
 		call Delay
