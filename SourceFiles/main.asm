@@ -11,7 +11,6 @@ ExitProcess PROTO, dwExitCode:DWORD
 
 .code
 Main PROC PUBLIC
-	call InitializeScreen
 	call InitializeUnits
 	
 	.REPEAT
