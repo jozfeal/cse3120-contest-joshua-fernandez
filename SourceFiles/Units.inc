@@ -17,6 +17,13 @@ InitializeUnits PROTO
 EXTERNDEF allies:Unit
 EXTERNDEF enemies:Unit
 
+; Macro that places the address of the field into eax
+mGetUnitField MACRO team:REQ, pos:REQ, field:REQ
+	lea eax, team				; start with the address of the team
+	add eax, pos * SIZEOF Unit	; skip to correct Unit in team
+	add eax, OFFSET Unit.&field	; adds the offset of the field to point to it
+ENDM
+
 ; Macro to move a Unit to a position in either team
 ; team = allies|enemies, pos = 0|1|2 
 mMoveUnit MACRO unit:REQ, team:REQ, pos:REQ
