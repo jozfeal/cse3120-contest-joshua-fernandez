@@ -6,6 +6,9 @@
 INCLUDE Irvine32.inc
 
 .data
+outHandle HANDLE 0					; standard output handle
+screenBufferSize COORD <48, 48>		; size of cmd window
+
 dashedLine BYTE 120 DUP("-"), 0		; as long as the default window opening size
 
 PumpkinBuffer BYTE 20, 11			; width and height of the ascii art in buffer 
@@ -22,6 +25,17 @@ PumpkinBuffer BYTE 20, 11			; width and height of the ascii art in buffer
 	BYTE "      ........      ", 0
 
 .code
+; ------------------------------
+InitializeScreen PROC USES eax
+; Takes no paramaters, initializes screen size and window size
+; ------------------------------
+	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+	mov outHandle,eax
+	INVOKE SetConsoleScreenBufferSize, outHandle, screenBufferSize
+
+	ret
+InitializeScreen ENDP
+
 ; ------------------------------
 Draw PROC USES ebx ecx esi
 ; Takes no parameters
