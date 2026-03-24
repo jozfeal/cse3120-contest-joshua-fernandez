@@ -19,7 +19,7 @@ Main PROC PUBLIC
 	.REPEAT
 		call ResetScreen
 		call Draw
-		mov eax, OFFSET placeholderName		; Changed later for actual character name
+		mGetUnitName allies, 0				; name of first ally unit
 		call PromptChoice
 	
 		.IF (eax == 1)						; 1 is the attack choice

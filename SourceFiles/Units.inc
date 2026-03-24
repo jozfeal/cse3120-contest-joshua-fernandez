@@ -17,11 +17,16 @@ InitializeUnits PROTO
 EXTERNDEF allies:Unit
 EXTERNDEF enemies:Unit
 
-; Macro that places the address of the field into eax
+; Macro that places the address of the field into eax, does not work for the first field in Unit
 mGetUnitField MACRO team:REQ, pos:REQ, field:REQ
-	lea eax, team				; start with the address of the team
-	add eax, pos * SIZEOF Unit	; skip to correct Unit in team
-	add eax, OFFSET Unit.&field	; adds the offset of the field to point to it
+	lea eax, team + (pos * SIZEOF Unit) + Unit.&field	; offset of team + unit in team + field in unit
+	; learned to use fields in structures as constants in the following thread
+	; https://forum.vcfed.org/index.php?threads/masm-struct-and-pointer-syntax.1241976/
+ENDM
+
+; Macro that places the address of the unit name into eax, special case because Unit.name = 0 and MASM throws an error for some reason
+mGetUnitName MACRO team:REQ, pos:REQ
+	lea eax, team + (pos * SIZEOF Unit)		; offset of team + unit in team, name is at 0
 ENDM
 
 ; Macro to move a Unit to a position in either team
