@@ -8,43 +8,7 @@ INCLUDE Irvine32.inc
 .data
 dashedLine BYTE 120 DUP("-"), 0		; as long as the default window opening size
 
-PumpkinBuffer BYTE 20, 11			; width and height of the ascii art in buffer 
-	BYTE "           -.       ", 0
-	BYTE "         -@%        ", 0
-	BYTE "         =@#        ", 0
-	BYTE "   =@@@@@**@@@@@#   ", 0
-	BYTE "  %@@#*@@@@@@#*%@@  ", 0
-	BYTE " @@@+   -@@*   .@@@ ", 0
-	BYTE " @@@@@@@@@@@@@@@@@@ ", 0
-	BYTE " %@@@@@@@-.#@@@@@@@ ", 0
-	BYTE "  %@@@+-#%%%+:@@@@  ", 0
-	BYTE "   *@@@*    -@@@@   ", 0
-	BYTE "      ........      ", 0
-
 .code
-; ------------------------------
-Draw PROC USES ebx ecx esi
-; Takes no parameters
-; Draws a pumpkin on the screen
-; ------------------------------
-	mov dx, 0
-	call Gotoxy						; moving the cursor back to the top for drawing
-
-	mov ebx, 0
-	mov bl, PumpkinBuffer[0]		; store the width
-	inc ebx							; account for null termination
-	mov ecx, 0
-	mov cl, PumpkinBuffer[1]		; store the height (for the loop)
-	mov esi, 0
-	mov edx, OFFSET PumpkinBuffer	; point to buffer
-	add edx, 2
-	L1:
-		call WriteString
-		call Crlf
-		add edx, ebx				; skips to the next line for printing
-		loop L1
-	ret
-Draw ENDP
 
 ; ------------------------------
 ResetScreen PROC USES edx
