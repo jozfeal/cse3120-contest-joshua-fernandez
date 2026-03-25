@@ -1,4 +1,5 @@
-.model flat,stdcall
+;.model flat,stdcall
+INCLUDE Irvine32.inc
 INCLUDE Units.inc
 
 .data

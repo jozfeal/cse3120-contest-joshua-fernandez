@@ -9,6 +9,7 @@ INCLUDE Units.inc
 INCLUDE Definitions.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
+WriteName PROTO stdcall, unitOffset:DWORD
 
 ; places the given char in front of the choice index when prompting
 mPlaceCharForChoice MACRO char:REQ, choice:REQ
@@ -59,14 +60,13 @@ PromptChoice PROC USES edx
 ; ------------------------------
 	mGotoxy 0, BOXROW	; start of user entry box
 	mWrite "Choose an action for "
-	mov edx, eax		; inserts character name for choice prompt
-	call WriteString
+	INVOKE WriteName, eax	; writes unit name with correct color
 	mWriteLn ":"
 	mWriteLn "> Attack"
 	mWriteLn "  Defend"
 	mWriteLn "  Spell"
 
-	mov dl, ATTACK		; default choice is attack
+	mov dl, ATTACK			; default choice is attack
 	WaitForConfirm:
 		push edx			; ReadKey overrides edx, so it needs to be saved
 		GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
@@ -99,5 +99,33 @@ PromptChoice PROC USES edx
 		mPlaceCharForChoice ">", dl	; highlights new player choice
 	jmp WaitForConfirm
 PromptChoice ENDP
+
+
+WriteName PROC USES eax edx, unitOffset:DWORD
+	and eax, 0			; clear	eax first
+	call GetTextColor	; get current colors used
+	push eax			; save current colors for restoring later
+	and eax, 11110000	; clears foreground colors bits
+	push eax			; must be pushed to use GetUnitField macro properly
+	mGetUnitField unitOffset, team	; check which team the unit is on
+	mov al, [eax]		; get value of team instead of address to it
+	.IF (al == ALLY)
+		pop eax			; get background color back
+		add eax, blue	; add blue foreground for allies
+	.ELSEIF (al == ENEMY)
+		pop eax
+		add eax, red	; add red foreground for enemies
+	.ELSE
+		pop eax			; fail safe, simply makes name black
+	.ENDIF
+	call SetTextColor	; make name the correct color
+
+	mov edx, unitOffset
+	call WriteString	; write name with current color
+	pop eax
+	call SetTextColor	; set original colors back
+
+	ret
+WriteName ENDP
 
 END Main

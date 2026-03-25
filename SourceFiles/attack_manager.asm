@@ -3,19 +3,18 @@ INCLUDE Macros.inc
 INCLUDE Definitions.inc
 INCLUDE Units.inc
 
+WriteName PROTO stdcall, unitOffset:DWORD
+
 .code
 ; ------------------------------
 AttackUnit PROC USES edx eax, attackerOffset:DWORD, receiverOffset:DWORD
 ; Takes the offsets of the respective attacker and defender
 ; Displays an attack message with how much damage was dealt
 ; ------------------------------
-	mGotoxy 0, BOXROW
-	mWriteName attackerOffset
-	;mov edx, attackerOffset		; writes attacker's name
-	;call WriteString
+	mGotoxy 0, BOXROW			; start of player box
+	INVOKE WriteName, attackerOffset
 	mWrite " attacked "
-	mov edx, receiverOffset		; writes receiver's name
-	call WriteString
+	INVOKE WriteName, receiverOffset
 	mWrite " for 5 damage!"
 
 	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4

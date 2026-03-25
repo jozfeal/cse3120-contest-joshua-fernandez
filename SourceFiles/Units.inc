@@ -16,7 +16,7 @@ UNIT STRUCT
 	spe BYTE 1				; speed
 Unit ENDS
 
-InitializeUnits PROTO
+InitializeUnits PROTO stdcall				; stdcall is needed here to avoid compile time error
 
 EXTERNDEF allies:UNIT
 EXTERNDEF enemies:UNIT
