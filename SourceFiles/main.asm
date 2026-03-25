@@ -37,7 +37,10 @@ Main PROC PUBLIC
 	
 		.IF (al == ATTACK)					; 1 is the attack choice
 			call ResetScreen
-			call AttackUnit
+			mGetUnit allies, 0
+			mov edx, eax
+			mGetUnit enemies, 1
+			INVOKE AttackUnit, edx, eax
 			stc
 		.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
 			stc

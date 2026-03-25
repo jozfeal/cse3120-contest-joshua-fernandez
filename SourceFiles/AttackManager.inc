@@ -1,3 +1,3 @@
 OPTION PROC:PRIVATE ; default option for methods
 
-AttackUnit PROTO
+AttackUnit PROTO, attackerOffset:DWORD, receiverOffset:DWORD
