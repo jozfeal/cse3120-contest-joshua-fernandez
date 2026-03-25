@@ -32,14 +32,14 @@ Main PROC PUBLIC
 	
 	.REPEAT
 		call ResetScreen
-		mGetUnit allies, 0				; name of first ally unit
+		mGetUnit ALLY, 0				; name of first ally unit
 		call PromptChoice
 	
 		.IF (al == ATTACK)					; 1 is the attack choice
 			call ResetScreen
-			mGetUnit allies, 0
+			mGetUnit ALLY, 0
 			mov edx, eax
-			mGetUnit enemies, 1
+			mGetUnit ENEMY, 1
 			INVOKE AttackUnit, edx, eax
 			stc
 		.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything

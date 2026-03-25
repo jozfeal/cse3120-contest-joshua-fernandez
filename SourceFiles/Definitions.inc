@@ -12,3 +12,6 @@ UP EQU 48h
 DOWN EQU 50h
 CONFIRM EQU 2Ch	; keyboard scan code for Z key
 ESCAPE EQU 27h	; keyboard scan code for Escape key
+
+; writes the name of the unit in the given offset, makes color blue or red depending on team
+;mWriteName MACRO
