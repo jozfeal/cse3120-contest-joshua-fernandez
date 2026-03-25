@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\SourceFiles\AttackManager.inc" />
+    <None Include="..\SourceFiles\Definitions.inc" />
     <None Include="..\SourceFiles\DrawManager.inc" />
     <None Include="..\SourceFiles\Units.inc" />
   </ItemGroup>

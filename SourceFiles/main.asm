@@ -6,10 +6,9 @@ INCLUDE Macros.inc
 INCLUDE AttackManager.inc
 INCLUDE DrawManager.inc
 INCLUDE Units.inc
+INCLUDE Definitions.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
-
-BOXROW EQU 24	; start of player's input box
 
 ; places the given char in front of the choice index when prompting
 mPlaceCharForChoice MACRO char:REQ, choice:REQ
@@ -20,19 +19,6 @@ mPlaceCharForChoice MACRO char:REQ, choice:REQ
 	mWrite char					; places given char
 	pop edx
 ENDM
-
-; ENUM for player choices
-ATTACK EQU 1	; starts at 1 because that is the line offset from BOXROW
-DEFEND EQU 2
-SPELL EQU 3
-
-; keyboard scan codes for the directional arrow keys
-LEFT EQU 4Bh 
-RIGHT EQU 4Dh 
-UP EQU 48h
-DOWN EQU 50h
-CONFIRM EQU 2Ch	; keyboard scan code for Z key
-ESCAPE EQU 27h	; keyboard scan code for Escape key
 
 .data
 cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, learnt in Ch 11.1.10
@@ -109,8 +95,6 @@ PromptChoice PROC USES edx
 
 		mPlaceCharForChoice ">", dl	; highlights new player choice
 	jmp WaitForConfirm
-
-	ret
 PromptChoice ENDP
 
 END Main
