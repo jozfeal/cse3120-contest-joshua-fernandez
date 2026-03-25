@@ -24,8 +24,8 @@ mGetUnitField MACRO team:REQ, pos:REQ, field:REQ
 	; https://forum.vcfed.org/index.php?threads/masm-struct-and-pointer-syntax.1241976/
 ENDM
 
-; Macro that places the address of the unit name into eax, special case because Unit.name = 0 and MASM throws an error for some reason
-mGetUnitName MACRO team:REQ, pos:REQ
+; Macro that gets the start of the given unit, equivalent to getting the unit's name
+mGetUnit MACRO team:REQ, pos:REQ
 	lea eax, team + (pos * SIZEOF UNIT)		; offset of team + unit in team, name is at 0
 ENDM
 

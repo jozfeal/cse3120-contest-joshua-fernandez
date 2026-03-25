@@ -1,11 +1,13 @@
 INCLUDE Irvine32.inc
+INCLUDE Definitions.inc
+INCLUDE Units.inc
 
 .data
 attackMsg BYTE "[Ally] attacked [Enemy] for [Dmg] damage!", 0
 
 .code
 ; ------------------------------
-AttackUnit PROC USES edx eax
+AttackUnit PROC USES edx eax, 
 ; Takes no parameters
 ; Displays an attack message with placeholder units and enemies
 ; ------------------------------

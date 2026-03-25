@@ -32,7 +32,7 @@ Main PROC PUBLIC
 	
 	.REPEAT
 		call ResetScreen
-		mGetUnitName allies, 0				; name of first ally unit
+		mGetUnit allies, 0				; name of first ally unit
 		call PromptChoice
 	
 		.IF (al == ATTACK)					; 1 is the attack choice
