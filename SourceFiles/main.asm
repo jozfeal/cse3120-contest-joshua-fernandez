@@ -78,23 +78,27 @@ PromptChoice PROC USES edx
 	mWriteLn "  Spell"
 
 	mov dl, ATTACK		; default choice is attack
-	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
-		mov eax, 10		; 10 ms delay between checks
-		call Delay
-		call ReadKey	; keyboard scan code is stored in AH
-		jz GetInput		; does nothing until user enters an input
+	WaitForConfirm:
+		push edx			; ReadKey overrides edx, so it needs to be saved
+		GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
+			mov eax, 10		; 10 ms delay between checks
+			call Delay
+			call ReadKey	; keyboard scan code is stored in AH
+			jz GetInput		; does nothing until user enters an input
+		pop edx
 
-	mPlaceCharForChoice " ", dl	; removes old player selection
+		mPlaceCharForChoice " ", dl	; removes old player selection
 
-	.IF (ah == CONFIRM)			; returns current choice selection
-		mov al, 2
-		ret
+		.IF (ah == CONFIRM)			; returns current choice selection
+			mov al, dl
+			ret
+		.ELSEIF (ah == UP)
+			nop
+		.ELSEIF (ah == DOWN)
+			nop
+		.ENDIF
 
-	.ELSEIF (ah == UP)
-		nop
-	.ENDIF
-
-	mPlaceCharForChoice ">", dl	; selcts new player choice
+		mPlaceCharForChoice ">", dl	; selcts new player choice
 
 	ret
 PromptChoice ENDP
