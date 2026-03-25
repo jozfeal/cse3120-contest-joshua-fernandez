@@ -10,8 +10,9 @@ AttackUnit PROC USES edx eax, attackerOffset:DWORD, receiverOffset:DWORD
 ; Displays an attack message with how much damage was dealt
 ; ------------------------------
 	mGotoxy 0, BOXROW
-	mov edx, attackerOffset		; writes attacker's name
-	call WriteString
+	mWriteName attackerOffset
+	;mov edx, attackerOffset		; writes attacker's name
+	;call WriteString
 	mWrite " attacked "
 	mov edx, receiverOffset		; writes receiver's name
 	call WriteString

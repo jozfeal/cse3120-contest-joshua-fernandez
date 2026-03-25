@@ -21,10 +21,9 @@ InitializeUnits PROTO
 EXTERNDEF allies:UNIT
 EXTERNDEF enemies:UNIT
 
-; Macro that places the address of the field into eax, does not work for the first field in Unit
-; teamEnum = ALLY|ENEMY, pos = 0|1|2 
-mGetUnitField MACRO teamEnum:REQ, pos:REQ, field:REQ
-	mGetUnit teamEnum, pos
+; Macro that places the address of the field into eax, does not work for the first field in Unit 
+mGetUnitField MACRO unitOffset, field:REQ
+	mov eax, unitOffset
 	add eax, UNIT.&field	; offset of team + unit in team + field in unit
 	; https://forum.vcfed.org/index.php?threads/masm-struct-and-pointer-syntax.1241976/
 ENDM
