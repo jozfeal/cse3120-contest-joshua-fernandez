@@ -22,9 +22,9 @@ mPlaceCharForChoice MACRO char:REQ, choice:REQ
 ENDM
 
 ; ENUM for player choices
-ATTACK EQU 2	; starts at 2 because that is the line offset from BOXROW
-DEFEND EQU 3
-SPELL EQU 4
+ATTACK EQU 1	; starts at 1 because that is the line offset from BOXROW
+DEFEND EQU 2
+SPELL EQU 3
 
 ; keyboard scan codes for the directional arrow keys
 LEFT EQU 4Bh 
@@ -53,10 +53,10 @@ Main PROC PUBLIC
 			call ResetScreen
 			call AttackUnit
 			stc
-		.ELSEIF (al >= 4)					; force stop game with an invalid instruction
-			clc
-		.ELSE								; go to next turn in game
+		.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
 			stc
+		.ELSE								; end the game
+			clc
 		.ENDIF
 	.UNTIL (!CARRY?)						; the carry flag is used as a boolean to know if combat should end
 
@@ -92,13 +92,23 @@ PromptChoice PROC USES edx
 		.IF (ah == CONFIRM)			; returns current choice selection
 			mov al, dl
 			ret
-		.ELSEIF (ah == UP)
-			nop
-		.ELSEIF (ah == DOWN)
-			nop
+		.ELSEIF (ah == UP)			; moves cursor up
+			dec dl
+			.IF (dl < ATTACK)		; wraps around if scrolls above options
+				mov dl, SPELL
+			.ENDIF
+		.ELSEIF (ah == DOWN)		; moves cursor down
+			inc dl
+			.IF (dl > SPELL)		; wraps around if scrolls below options
+				mov dl, ATTACK
+			.ENDIF
+		.ELSE						; no instruction, ends game
+			mov al, -1
+			ret
 		.ENDIF
 
-		mPlaceCharForChoice ">", dl	; selcts new player choice
+		mPlaceCharForChoice ">", dl	; highlights new player choice
+	jmp WaitForConfirm
 
 	ret
 PromptChoice ENDP
