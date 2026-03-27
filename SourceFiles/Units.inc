@@ -29,14 +29,21 @@ mGetUnitField MACRO unitOffset, field:REQ
 ENDM
 
 ; Macro that gets the start of the given unit, equivalent to getting the unit's name
-; teamEnum = ALLY|ENEMY, pos = 0|1|2 
+; teamEnum = ALLY|ENEMY, pos = 0|1|2|register
 mGetUnit MACRO teamEnum:REQ, pos:REQ
+	push ecx
+	mov ecx, pos				; this allows me to use a register for pos
 	mov eax, teamEnum
-	.IF (eax == ALLY)						; offset of team + unit in team, name is at 0
-		lea eax, allies + (pos * SIZEOF UNIT)
-	.ELSEIF (eax == ENEMY)					; offset of team + unit in team, name is at 0
-		lea eax, enemies + (pos * SIZEOF UNIT)
+	.IF (eax == ALLY)			; offset of team + unit in team, name is at 0
+		lea eax, allies
+	.ELSEIF (eax == ENEMY)		; offset of team + unit in team, name is at 0
+		lea eax, enemies
 	.ENDIF
+	.WHILE (ecx > 0)
+		add eax, SIZEOF UNIT	; for every team position, increment pointer by unit size
+		dec ecx
+	.ENDW
+	pop ecx
 ENDM
 
 ; Macro to move a Unit to a position in either team

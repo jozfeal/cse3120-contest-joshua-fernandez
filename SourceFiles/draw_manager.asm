@@ -7,6 +7,7 @@ INCLUDE Irvine32.inc
 INCLUDE Units.inc
 INCLUDE Macros.inc
 INCLUDE Definitions.inc
+INCLUDE DrawManager.inc
 
 .data
 dashedLine BYTE 120 DUP("-"), 0		; as long as the default window opening size
@@ -25,6 +26,7 @@ ResetScreen PROC USES edx
 	call Gotoxy
 	mov edx, OFFSET dashedLine
 	call WriteString					; puts a dashed line to divide game screen and prompt screen
+	call PrintUnits
 
 	ret
 ResetScreen ENDP
@@ -34,12 +36,15 @@ PrintUnits PROC USES ecx edx eax
 ; Does not take any parameters
 ; Prints all the units of both teams on the screen
 ; ------------------------------
-	mov ecx, 3					; loop 3 times, for each enemuy unit
+	mov ecx, 3					; loop 3 times, for each enemy unit
 	PrintUnit:
 		mov eax, UNITCOL
 		mul ecx
-		mGotoxy [eax], ENEMYROW	; calculate position with ecx and unit column spacing
-
+		mGotoxy al, ENEMYROW	; calculate position with ecx and unit column spacing
+		mov edx, ecx
+		dec edx					; must do ecx - 1 to get correct unit index
+		mGetUnit ENEMY, edx
+		INVOKE WriteName, eax	; put corresponding unit name on screen
 		loop PrintUnit
 	ret
 PrintUnits ENDP
