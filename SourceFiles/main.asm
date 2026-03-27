@@ -100,8 +100,11 @@ PromptChoice PROC USES edx
 	jmp WaitForConfirm
 PromptChoice ENDP
 
-
+; ------------------------------
 WriteName PROC USES eax edx, unitOffset:DWORD
+; Takes the address of a unit
+; Returns nothing; writes unit's name cyan or magenta, depending on team
+;------------------------------
 	and eax, 0			; clear	eax first
 	call GetTextColor	; get current colors used
 	push eax			; save current colors for restoring later
@@ -111,10 +114,10 @@ WriteName PROC USES eax edx, unitOffset:DWORD
 	mov al, [eax]		; get value of team instead of address to it
 	.IF (al == ALLY)
 		pop eax			; get background color back
-		add eax, blue	; add blue foreground for allies
+		add eax, lightCyan	; add blue foreground for allies
 	.ELSEIF (al == ENEMY)
 		pop eax
-		add eax, red	; add red foreground for enemies
+		add eax, lightMagenta	; add red foreground for enemies
 	.ELSE
 		pop eax			; fail safe, simply makes name black
 	.ENDIF
