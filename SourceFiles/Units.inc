@@ -5,8 +5,8 @@ ALLY EQU 0
 ENEMY EQU 1
 
 ; units are made of this structure
-UNIT STRUCT 
-	name BYTE 11 DUP(0)		; display name up to 10 chars
+UNIT STRUCT
+	unitName BYTE 11 DUP(0)	; display name up to 10 chars
 	role BYTE 11 DUP(0)		; display role up to 10 chars
 	maxHealth BYTE 20		; health values
 	curHealth BYTE 20
