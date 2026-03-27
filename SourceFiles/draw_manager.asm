@@ -41,18 +41,36 @@ PrintUnits PROC USES ecx edx eax
 		mov eax, UNITCOL
 		mul ecx
 		mGotoxy al, ENEMYROW	; calculate position with ecx and unit column spacing
+		push eax				; saved for next line in unit display
+		
+		mWrite "Name: "
 		mov edx, ecx
 		dec edx					; must do ecx - 1 to get correct unit index
 		mGetUnit ENEMY, edx
 		INVOKE WriteName, eax	; put corresponding unit name on screen
-		loop PrintUnit
+		
+		pop eax
+		mGotoxy al, ENEMYROW+1	; get column back and go to next line				
+		
+		mWrite "Role: "
+		mov edx, ecx
+		dec edx
+		mGetUnit ENEMY, edx
+		mGetUnitField eax, role	; get unit's role to print
+		mov edx, eax
+		call WriteString
+
+		mov edx, SIZEOF UNIT
+
+		dec ecx
+		jnz PrintUnit
 	ret
 PrintUnits ENDP
 
 ; ------------------------------
 WriteName PROC USES eax edx, unitOffset:DWORD
 ; Takes the address of a unit
-; Returns nothing; writes unit's name cyan or magenta, depending on team
+; Returns nothing; writes unit's name cyan or red, depending on team
 ;------------------------------
 	and eax, 0			; clear	eax first
 	call GetTextColor	; get current colors used
@@ -66,7 +84,7 @@ WriteName PROC USES eax edx, unitOffset:DWORD
 		add eax, lightCyan	; add blue foreground for allies
 	.ELSEIF (al == ENEMY)
 		pop eax
-		add eax, lightMagenta	; add red foreground for enemies
+		add eax, lightRed	; add red foreground for enemies
 	.ELSE
 		pop eax			; fail safe, simply makes name black
 	.ENDIF
