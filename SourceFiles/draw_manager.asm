@@ -4,6 +4,12 @@
 ; https://stackoverflow.com/questions/62618027/how-to-write-and-combine-multiple-source-files-for-a-project-in-masm
 
 INCLUDE Irvine32.inc
+INCLUDE Units.inc
+
+; rows that the units are placed in
+ENEMYROW EQU 8
+ALLYROW EQU 16
+UNITCOL EQU 30 ; column numbers for each of the units
 
 .data
 dashedLine BYTE 120 DUP("-"), 0		; as long as the default window opening size
@@ -25,5 +31,14 @@ ResetScreen PROC USES edx
 
 	ret
 ResetScreen ENDP
+
+; ------------------------------
+PrintUnits PROC
+; Does not take any parameters
+; Prints all the units of both teams on the screen
+; ------------------------------
+	
+	ret
+PrintUnits ENDP
 
 END
