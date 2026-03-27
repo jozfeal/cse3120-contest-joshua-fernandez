@@ -1,4 +1,8 @@
 BOXROW EQU 24	; start of player's input box
+; rows that the units are placed in
+ENEMYROW EQU 8
+ALLYROW EQU 16
+UNITCOL EQU 30 ; column numbers for each of the units
 
 ; ENUM for player choices
 ATTACK EQU 1	; starts at 1 because that is the line offset from BOXROW

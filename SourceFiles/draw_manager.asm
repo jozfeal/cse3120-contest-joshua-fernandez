@@ -5,11 +5,8 @@
 
 INCLUDE Irvine32.inc
 INCLUDE Units.inc
-
-; rows that the units are placed in
-ENEMYROW EQU 8
-ALLYROW EQU 16
-UNITCOL EQU 30 ; column numbers for each of the units
+INCLUDE Macros.inc
+INCLUDE Definitions.inc
 
 .data
 dashedLine BYTE 120 DUP("-"), 0		; as long as the default window opening size
@@ -33,11 +30,17 @@ ResetScreen PROC USES edx
 ResetScreen ENDP
 
 ; ------------------------------
-PrintUnits PROC
+PrintUnits PROC USES ecx edx eax
 ; Does not take any parameters
 ; Prints all the units of both teams on the screen
 ; ------------------------------
-	
+	mov ecx, 3					; loop 3 times, for each enemuy unit
+	PrintUnit:
+		mov eax, UNITCOL
+		mul ecx
+		mGotoxy [eax], ENEMYROW	; calculate position with ecx and unit column spacing
+
+		loop PrintUnit
 	ret
 PrintUnits ENDP
 
