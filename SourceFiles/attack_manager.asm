@@ -4,6 +4,7 @@ INCLUDE Definitions.inc
 INCLUDE Units.inc
 
 WriteName PROTO stdcall, unitOffset:DWORD
+YellowNumber PROTO, number:DWORD
 
 .code
 ; ------------------------------
@@ -28,8 +29,7 @@ AttackUnit PROC USES edx eax ecx, attackerOffset:DWORD, receiverOffset:DWORD
 		and eax, 0		; clear eax
 		mov al, dl		; move damage amount to al for printing
 	.ENDIF
-	call WriteDec		; display damage amount
-
+	INVOKE YellowNumber, eax	; display damage in yellow
 	mWrite " damage!"
 	
 	mov ecx, eax		; move damage outside of eax to use eax

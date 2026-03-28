@@ -11,6 +11,7 @@ UNIT STRUCT
 	maxHealth BYTE 20		; health values
 	curHealth BYTE 20
 	team BYTE ALLY			; team the unit belongs to
+	pos BYTE ?				; position in team of this unit
 	att BYTE 4				; attack
 	def BYTE 1				; defense
 	spe BYTE 1				; speed
@@ -47,8 +48,8 @@ mGetUnit MACRO teamEnum:REQ, pos:REQ
 ENDM
 
 ; Macro to move a Unit to a position in either team
-; teamEnum = ALLY|ENEMY, pos = 0|1|2 
-mMoveUnit MACRO unitObj:REQ, teamEnum:REQ, pos:REQ
+; teamEnum = ALLY|ENEMY, position = 0|1|2 
+mMoveUnit MACRO unitObj:REQ, teamEnum:REQ, position:REQ
 	push esi
 	push edi
 	push ecx
@@ -57,10 +58,11 @@ mMoveUnit MACRO unitObj:REQ, teamEnum:REQ, pos:REQ
 	mov eax, teamEnum
 	mov esi, OFFSET unitObj					; move data from object instance
 	mov unitObj.team, teamEnum				; assign team to unit
+	mov unitObj.pos, position				; assign position in team to unit
 	.IF (eax == ALLY)						; places unit in ally team offset
-		lea edi, allies[pos * SIZEOF UNIT]
+		lea edi, allies[position * SIZEOF UNIT]
 	.ELSEIF (eax == ENEMY)					; places unit in enemy team offset
-		lea edi, enemies[pos * SIZEOF UNIT]
+		lea edi, enemies[position * SIZEOF UNIT]
 	.ENDIF
 	mov ecx, SIZEOF UNIT					; copy all of unit's fields
 	rep movsb								; copy unit to place in team
