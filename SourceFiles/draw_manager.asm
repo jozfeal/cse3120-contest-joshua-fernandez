@@ -83,12 +83,12 @@ PrintUnits PROC USES ecx edx eax
 ; Does not take any parameters
 ; Prints all the units of both teams on the screen
 ; ------------------------------
-	mov ecx, 3					; loop 3 times, for each enemy unit
+	mov ecx, 3				; loop 3 times, for each enemy unit
 	PrintUnit:
 		mPrintTeam ENEMY
 		mPrintTeam ALLY
 		dec ecx
-		jnz PrintUnit
+		jnz PrintUnit		; loop does not reach so I used jnz
 	ret
 PrintUnits ENDP
 

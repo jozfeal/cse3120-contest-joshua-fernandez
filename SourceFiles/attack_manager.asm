@@ -15,7 +15,22 @@ AttackUnit PROC USES edx eax, attackerOffset:DWORD, receiverOffset:DWORD
 	INVOKE WriteName, attackerOffset
 	mWrite " attacked "
 	INVOKE WriteName, receiverOffset
-	mWrite " for 5 damage!"
+	mWrite " for "
+
+	mGetUnitField attackerOffset, att	; get attacker's attack value
+	mov dl, BYTE PTR [eax]
+	mGetUnitField receiverOffset, def	; get receiver's defense value
+	sub dl, BYTE PTR [eax]
+
+	.IF (SIGN?)			; sign flag indicates negative damage
+		mov eax, 0		; negative damage is simply bumped up to 0
+	.ELSE
+		and eax, 0		; clear eax
+		mov al, dl		; move damage amount to al for printing
+	.ENDIF
+	call WriteDec		; display damage amount
+
+	mWrite " damage!"
 
 	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
 		mov eax, 10		; 10 ms delay between checks

@@ -11,7 +11,7 @@ UNIT STRUCT
 	maxHealth BYTE 20		; health values
 	curHealth BYTE 20
 	team BYTE ALLY			; team the unit belongs to
-	att BYTE 2				; attack
+	att BYTE 4				; attack
 	def BYTE 1				; defense
 	spe BYTE 1				; speed
 Unit ENDS
