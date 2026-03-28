@@ -50,17 +50,38 @@ PrintUnits PROC USES ecx edx eax
 		INVOKE WriteName, eax	; put corresponding unit name on screen
 		
 		pop eax
-		mGotoxy al, ENEMYROW+1	; get column back and go to next line				
-		
+		mGotoxy al, ENEMYROW+1	; get column back and go to next line
+		push eax
+
 		mWrite "Role: "
 		mov edx, ecx
 		dec edx
 		mGetUnit ENEMY, edx
 		mGetUnitField eax, role	; get unit's role to print
 		mov edx, eax
-		call WriteString
+		call WriteString		; print unit role
 
-		mov edx, SIZEOF UNIT
+		pop eax
+		mGotoxy al, ENEMYROW+2	; get column back and go to next line
+		
+		mWrite "Health: "		; display both max and current hp
+		mov edx, ecx
+		dec edx
+		push edx				; keep edx for next use, since it is about to be changed
+		mGetUnit ENEMY, edx
+		mGetUnitField eax, curHealth	; get this unit's current health
+		mov edx, eax			; save address of curHP
+		and eax, 0				; clear upper half of eax
+		mov al, BYTE PTR [edx]	; dereference from address
+		call WriteDec			; display current health
+		mWrite "/"				; divider between current and max hp
+		pop edx					; get unit index back
+		mGetUnit ENEMY, edx
+		mGetUnitField eax, maxHealth	; get max health
+		mov edx, eax			; save address of curHP
+		and eax, 0				; clear upper half of eax
+		mov al, BYTE PTR [edx]	; dereference from address
+		call WriteDec
 
 		dec ecx
 		jnz PrintUnit
