@@ -21,9 +21,7 @@ ResetScreen PROC USES edx
 ; the template for the game UI
 ; ------------------------------
 	call Clrscr
-	mov dh, 23
-	mov dl, 0
-	call Gotoxy
+	mGotoxy 0, 23
 	mov edx, OFFSET dashedLine
 	call WriteString					; puts a dashed line to divide game screen and prompt screen
 	call PrintUnits
