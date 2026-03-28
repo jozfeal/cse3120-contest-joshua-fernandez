@@ -31,6 +31,53 @@ ResetScreen PROC USES edx
 	ret
 ResetScreen ENDP
 
+; prints the team given, assuming that ecx is used as a counter for the units in the team outside this macro
+mPrintTeam MACRO team:REQ
+	mov eax, UNITCOL
+	mul ecx
+	mGotoxy al, team&ROW	; calculate position with ecx and unit column spacing
+	push eax				; saved for next line in unit display
+	
+	mWrite "Name: "
+	mov edx, ecx
+	dec edx					; must do ecx - 1 to get correct unit index
+	mGetUnit team, edx
+	INVOKE WriteName, eax	; put corresponding unit name on screen
+	
+	pop eax
+	mGotoxy al, team&ROW+1	; get column back and go to next line
+	push eax
+		mWrite "Role: "
+	mov edx, ecx
+	dec edx
+	mGetUnit team, edx
+	mGetUnitField eax, role	; get unit's role to print
+	mov edx, eax
+	call WriteString		; print unit role
+
+	pop eax
+	mGotoxy al, team&ROW+2	; get column back and go to next line
+		
+	mWrite "Health: "		; display both max and current hp
+	mov edx, ecx
+	dec edx
+	push edx				; keep edx for next use, since it is about to be changed
+	mGetUnit team, edx
+	mGetUnitField eax, curHealth	; get this unit's current health
+	mov edx, eax			; save address of curHP
+	and eax, 0				; clear upper half of eax
+	mov al, BYTE PTR [edx]	; dereference from address
+	call WriteDec			; display current health
+	mWrite "/"				; divider between current and max hp
+	pop edx					; get unit index back
+	mGetUnit team, edx
+	mGetUnitField eax, maxHealth	; get max health
+	mov edx, eax			; save address of curHP
+	and eax, 0				; clear upper half of eax
+	mov al, BYTE PTR [edx]	; dereference from address
+	call WriteDec
+ENDM
+
 ; ------------------------------
 PrintUnits PROC USES ecx edx eax
 ; Does not take any parameters
@@ -38,51 +85,8 @@ PrintUnits PROC USES ecx edx eax
 ; ------------------------------
 	mov ecx, 3					; loop 3 times, for each enemy unit
 	PrintUnit:
-		mov eax, UNITCOL
-		mul ecx
-		mGotoxy al, ENEMYROW	; calculate position with ecx and unit column spacing
-		push eax				; saved for next line in unit display
-		
-		mWrite "Name: "
-		mov edx, ecx
-		dec edx					; must do ecx - 1 to get correct unit index
-		mGetUnit ENEMY, edx
-		INVOKE WriteName, eax	; put corresponding unit name on screen
-		
-		pop eax
-		mGotoxy al, ENEMYROW+1	; get column back and go to next line
-		push eax
-
-		mWrite "Role: "
-		mov edx, ecx
-		dec edx
-		mGetUnit ENEMY, edx
-		mGetUnitField eax, role	; get unit's role to print
-		mov edx, eax
-		call WriteString		; print unit role
-
-		pop eax
-		mGotoxy al, ENEMYROW+2	; get column back and go to next line
-		
-		mWrite "Health: "		; display both max and current hp
-		mov edx, ecx
-		dec edx
-		push edx				; keep edx for next use, since it is about to be changed
-		mGetUnit ENEMY, edx
-		mGetUnitField eax, curHealth	; get this unit's current health
-		mov edx, eax			; save address of curHP
-		and eax, 0				; clear upper half of eax
-		mov al, BYTE PTR [edx]	; dereference from address
-		call WriteDec			; display current health
-		mWrite "/"				; divider between current and max hp
-		pop edx					; get unit index back
-		mGetUnit ENEMY, edx
-		mGetUnitField eax, maxHealth	; get max health
-		mov edx, eax			; save address of curHP
-		and eax, 0				; clear upper half of eax
-		mov al, BYTE PTR [edx]	; dereference from address
-		call WriteDec
-
+		mPrintTeam ENEMY
+		mPrintTeam ALLY
 		dec ecx
 		jnz PrintUnit
 	ret
