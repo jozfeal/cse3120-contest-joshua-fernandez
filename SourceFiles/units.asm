@@ -22,7 +22,7 @@ InitializeUnits PROC
 InitializeUnits ENDP
 
 ; ------------------------------
-UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:DWORD
+UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 ; Takes offset of the unit whose health is changing and the change in health
 ; Change can be negative or positive
 ; Returns number of choice selected in AL
@@ -51,14 +51,17 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:DWORD
 		pop eax
 	.ENDIF 
 
-	mov edx, ecx
-	dec edx
-	;mGetUnit ALLY, edx
-	;mGetUnitField eax, curHealth	; get this unit's current health
-	mov edx, eax			; save address of curHP
-	and eax, 0				; clear upper half of eax
-	mov al, BYTE PTR [edx]	; dereference from address
-	call WriteDec			; display current health
+	mGetUnitField unitOffset, curHealth
+	mov dl, BYTE PTR [eax]	; get this unit's current health
+	add dl, change			; apply change
+	mGetUnitField unitOffset, maxHealth
+	.IF (SIGN?)				; if health goes negative, bump it to 0
+		mov dl, 0
+	.ELSEIF (dl > BYTE PTR [eax])	; if health goes above max, bump it down to max
+		mov dl, BYTE PTR [eax]
+	.ENDIF
+	mGetUnitField unitOffset, curHealth
+	mov BYTE PTR [eax], dl	; update unit's actual health
 	
 	ret
 UpdateHealth ENDP
