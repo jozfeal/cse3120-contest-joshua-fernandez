@@ -19,4 +19,24 @@ InitializeUnits PROC
 	ret
 InitializeUnits ENDP
 
+; ------------------------------
+UpdateHealth PROC USES eax, unitOffset:DWORD, change:DWORD
+; Takes offset of the unit whose health is changing and the change in health
+; Change can be negative or positive
+; Returns number of choice selected in AL
+; ------------------------------
+	mov eax, unitOffset
+	mov eax, change
+	mov edx, ecx
+	dec edx
+	;mGetUnit ALLY, edx
+	;mGetUnitField eax, curHealth	; get this unit's current health
+	mov edx, eax			; save address of curHP
+	and eax, 0				; clear upper half of eax
+	mov al, BYTE PTR [edx]	; dereference from address
+	call WriteDec			; display current health
+	
+	ret
+UpdateHealth ENDP
+
 END
