@@ -3,6 +3,7 @@ INCLUDE Irvine32.inc
 INCLUDE Units.inc
 INCLUDE Definitions.inc
 INCLUDE Macros.inc
+INCLUDE DrawManager.inc
 
 .data
 allies UNIT 3 DUP (<>)
@@ -39,7 +40,7 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 	add al, 8				; skip to curHealth amount in display
 	push eax				; save column
 	
-	mGetUnitField unitOFfset, team
+	mGetUnitField unitOffset, team
 	mov al, BYTE PTR [eax]	; get's this unit team to determine row
 	.IF (al == ALLY)		; use ALLYROW for row if ally
 		pop eax
@@ -62,6 +63,23 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 	.ENDIF
 	mGetUnitField unitOffset, curHealth
 	mov BYTE PTR [eax], dl	; update unit's actual health
+
+	.IF (change < 0)		; if health went down, display new health in yellow
+		INVOKE ColorNumber, yellow, BYTE PTR [eax]
+	.ELSEIF (change > 0)	; if health went up, display new health in green
+		INVOKE ColorNumber, lightGreen, BYTE PTR [eax]
+	.ELSE					; failsafe, new health in white
+		INVOKE ColorNumber, white, BYTE PTR [eax]
+	.ENDIF
+	 
+	mWrite "/"				; divider between current and max hp
+	mGetUnitField unitOffset, maxHealth	; get max health
+	mov edx, eax			; save address of maxHP
+	and eax, 0				; clear upper half of eax
+	mov al, BYTE PTR [edx]	; dereference from address
+	call WriteDec
+
+	mWriteSpace 4			; erases trailing chars behind max health, won't work if maxHealth > 999
 	
 	ret
 UpdateHealth ENDP

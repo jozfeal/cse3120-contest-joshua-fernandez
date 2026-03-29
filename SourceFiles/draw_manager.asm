@@ -70,7 +70,7 @@ mPrintTeam MACRO team:REQ
 	pop edx					; get unit index back
 	mGetUnit team, edx
 	mGetUnitField eax, maxHealth	; get max health
-	mov edx, eax			; save address of curHP
+	mov edx, eax			; save address of maxHP
 	and eax, 0				; clear upper half of eax
 	mov al, BYTE PTR [edx]	; dereference from address
 	call WriteDec
