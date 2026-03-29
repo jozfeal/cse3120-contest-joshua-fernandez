@@ -1,4 +1,4 @@
-OPTION PROC:PRIVATE ; default option for methods
+OPTION PROC:PUBLIC ; default option for methods
 ResetScreen PROTO
 WriteName PROTO, unitOffset:DWORD
-YellowNumber PROTO, number:DWORD
+ColorNumber PROTO, color:DWORD, number:DWORD

@@ -2,9 +2,7 @@ INCLUDE Irvine32.inc
 INCLUDE Macros.inc
 INCLUDE Definitions.inc
 INCLUDE Units.inc
-
-WriteName PROTO stdcall, unitOffset:DWORD
-YellowNumber PROTO, number:DWORD
+INCLUDE DrawManager.inc
 
 .code
 ; ------------------------------
@@ -29,7 +27,7 @@ AttackUnit PROC USES edx eax ecx, attackerOffset:DWORD, receiverOffset:DWORD
 		and eax, 0		; clear eax
 		mov al, dl		; move damage amount to al for printing
 	.ENDIF
-	INVOKE YellowNumber, eax	; display damage in yellow
+	INVOKE ColorNumber, yellow, eax	; display damage in yellow
 	mWrite " damage!"
 	
 	mov ecx, eax		; move damage outside of eax to use eax

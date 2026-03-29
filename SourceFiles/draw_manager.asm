@@ -122,15 +122,15 @@ WriteName PROC USES eax edx, unitOffset:DWORD
 WriteName ENDP
 
 ; ------------------------------
-YellowNumber PROC USES eax, number:DWORD
+ColorNumber PROC USES eax, color:DWORD, number:DWORD
 ; Takes the number to be displayed
-; Displays the given number in yellow, keeping background color the same
+; Displays the given number in color, keeping background color the same
 ; ------------------------------
 	and eax, 0			; clear	eax first
 	call GetTextColor	; get current colors used
 	push eax			; save current colors for restoring later
 	and eax, 11110000	; clears foreground colors bits
-	add eax, yellow		; makes foreground yellow
+	add eax, color		; makes foreground yellow
 	call SetTextColor	; change to yellow
 
 	mov eax, number
@@ -140,6 +140,6 @@ YellowNumber PROC USES eax, number:DWORD
 	call SetTextColor	; set original colors back
 
 	ret
-YellowNumber ENDP
+ColorNumber ENDP
 
 END
