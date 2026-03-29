@@ -122,7 +122,7 @@ WriteName PROC USES eax edx, unitOffset:DWORD
 WriteName ENDP
 
 ; ------------------------------
-ColorNumber PROC USES eax, color:DWORD, number:DWORD
+ColorNumber PROC USES eax edx, color:DWORD, number:DWORD
 ; Takes the number to be displayed
 ; Displays the given number in color, keeping background color the same
 ; ------------------------------

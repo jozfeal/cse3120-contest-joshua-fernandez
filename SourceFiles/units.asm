@@ -28,7 +28,7 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 ; Change can be negative or positive
 ; Returns number of choice selected in AL
 ; ------------------------------
-	.IF (change == 0)		; if there is no change, do nothing
+	.IF (change == 0)			; if there is no change, do nothing
 		ret
 	.ENDIF
 
@@ -36,6 +36,7 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 	mov dl, BYTE PTR [eax]	; get this unit's position in team
 
 	mov al, UNITCOL
+	inc dl					; aligns unit column offset correctly
 	mul dl					; calculate column start of unit box
 	add al, 8				; skip to curHealth amount in display
 	push eax				; save column
@@ -44,18 +45,18 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 	mov al, BYTE PTR [eax]	; get's this unit team to determine row
 	.IF (al == ALLY)		; use ALLYROW for row if ally
 		pop eax
-		mGotoxy al, ALLYROW
+		mGotoxy al, ALLYROW+2
 	.ELSEIF (al == ENEMY)	; use ENEMYROW for row if enemy
 		pop eax
-		mGotoxy al, ENEMYROW
+		mGotoxy al, ENEMYROW+2
 	.ELSE					; failsafe to keep stack working
 		pop eax
 	.ENDIF 
 
 	mGetUnitField unitOffset, curHealth
 	mov dl, BYTE PTR [eax]	; get this unit's current health
+	mGetUnitField unitOffset, maxHealth	; goes before add dl, change so I can use SIGN?
 	add dl, change			; apply change
-	mGetUnitField unitOffset, maxHealth
 	.IF (SIGN?)				; if health goes negative, bump it to 0
 		mov dl, 0
 	.ELSEIF (dl > BYTE PTR [eax])	; if health goes above max, bump it down to max
@@ -64,13 +65,20 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 	mGetUnitField unitOffset, curHealth
 	mov BYTE PTR [eax], dl	; update unit's actual health
 
-	.IF (change < 0)		; if health went down, display new health in yellow
-		INVOKE ColorNumber, yellow, BYTE PTR [eax]
-	.ELSEIF (change > 0)	; if health went up, display new health in green
-		INVOKE ColorNumber, lightGreen, BYTE PTR [eax]
-	.ELSE					; failsafe, new health in white
-		INVOKE ColorNumber, white, BYTE PTR [eax]
-	.ENDIF
+	; this part is done with cmp and jumps because the .IF directive caused runtime errors
+	cmp change, 0
+	jne NotZero						; if no change, print health in white again, failsafe
+	INVOKE ColorNumber, white, dl	
+	jmp Finish						; skip next comparisons
+
+	NotZero:
+	jns Increase					; if not signed, health went up, skip this part
+	INVOKE ColorNumber, yellow, dl	; yellow if health went down
+	jmp Finish
+
+	Increase:
+	INVOKE ColorNumber, lightGreen, dl	; green if health went up
+	Finish:
 	 
 	mWrite "/"				; divider between current and max hp
 	mGetUnitField unitOffset, maxHealth	; get max health
@@ -83,5 +91,6 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 	
 	ret
 UpdateHealth ENDP
+
 
 END
