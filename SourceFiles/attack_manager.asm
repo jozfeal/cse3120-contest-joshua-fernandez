@@ -10,6 +10,7 @@ AttackUnit PROC USES edx eax ecx, attackerOffset:DWORD, receiverOffset:DWORD
 ; Takes the offsets of the respective attacker and defender
 ; Displays an attack message with how much damage was dealt
 ; ------------------------------
+	call ResetBox
 	mGotoxy 0, BOXROW			; start of player box
 	INVOKE WriteName, attackerOffset
 	mWrite " attacked "

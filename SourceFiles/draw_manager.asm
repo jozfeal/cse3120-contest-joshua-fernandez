@@ -29,6 +29,20 @@ ResetScreen PROC USES edx
 	ret
 ResetScreen ENDP
 
+; ------------------------------
+ResetBox PROC USES edx ecx
+; Does not take any parameters
+; Clears the player input box
+; ------------------------------
+	mGotoxy 0, BOXROW	; past the dashed dividing line
+	mov ecx, 5			; lines present in box
+	ClearLine:
+		mWriteSpace 120	; clear a whole line
+		call Crlf
+		loop ClearLine
+	ret
+ResetBox ENDP
+
 ; prints the team given, assuming that ecx is used as a counter for the units in the team outside this macro
 mPrintTeam MACRO team:REQ
 	mov eax, UNITCOL
