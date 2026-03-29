@@ -100,4 +100,57 @@ PromptChoice PROC USES edx
 	jmp WaitForConfirm
 PromptChoice ENDP
 
+; ------------------------------
+ChooseTarget PROC USES edx
+; Takes the offset of the character name in EAX
+; Returns number of choice selected in AL
+; ------------------------------
+	mGotoxy 0, BOXROW		; start of user entry box
+	mWriteLn "Choose a target:"
+
+	mWrite"> "				; starts with the first enemy selected
+	mGetUnit ENEMY, 0
+	INVOKE WriteName, eax	; puts the enemy as a choice
+	 
+	mWrite" "
+	mGetUnit ENEMY, 1
+	INVOKE WriteName, eax	; puts the enemy as a choice
+	mWrite" "
+	mGetUnit ENEMY, 2
+	INVOKE WriteName, eax	; puts the enemy as a choice
+
+	mov dl, ATTACK			; default choice is attack
+	WaitForConfirm:
+		push edx			; ReadKey overrides edx, so it needs to be saved
+		GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
+			mov eax, 10		; 10 ms delay between checks
+			call Delay
+			call ReadKey	; keyboard scan code is stored in AH
+			jz GetInput		; does nothing until user enters an input
+		pop edx
+
+		mPlaceCharForChoice " ", dl	; removes old player selection
+
+		.IF (ah == CONFIRM)			; returns current choice selection
+			mov al, dl
+			ret
+		.ELSEIF (ah == UP)			; moves cursor up
+			dec dl
+			.IF (dl < ATTACK)		; wraps around if scrolls above options
+				mov dl, SPELL
+			.ENDIF
+		.ELSEIF (ah == DOWN)		; moves cursor down
+			inc dl
+			.IF (dl > SPELL)		; wraps around if scrolls below options
+				mov dl, ATTACK
+			.ENDIF
+		.ELSE						; no instruction, ends game
+			mov al, -1
+			ret
+		.ENDIF
+
+		mPlaceCharForChoice ">", dl	; highlights new player choice
+	jmp WaitForConfirm
+ChooseTarget ENDP
+
 END Main
