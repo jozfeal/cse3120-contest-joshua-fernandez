@@ -18,6 +18,7 @@ UNIT STRUCT
 Unit ENDS
 
 InitializeUnits PROTO stdcall				; stdcall is needed here to avoid compile time error
+UpdateHealth PROTO STDCALL, unitOffset:DWORD, change:SBYTE
 
 EXTERNDEF allies:UNIT
 EXTERNDEF enemies:UNIT

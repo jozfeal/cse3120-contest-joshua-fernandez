@@ -29,17 +29,9 @@ AttackUnit PROC USES edx eax ecx, attackerOffset:DWORD, receiverOffset:DWORD
 	.ENDIF
 	INVOKE ColorNumber, yellow, eax	; display damage in yellow
 	mWrite " damage!"
-	
-	mov ecx, eax		; move damage outside of eax to use eax
-	mGetUnitField receiverOffset, curHealth
-	and edx, 0
-	mov dl, BYTE PTR [eax]	; get unit's current health in dl
-	sub dl, cl			; substracts damage from receiver's health
-	.IF (SIGN?)			; prevents health from going negative
-		mov BYTE PTR [eax], 0
-	.ELSE				; otherwise updates health for receiver
-		mov BYTE PTR [eax], dl
-	.ENDIF
+
+	neg eax				; make change negative for use in UpdateHealth
+	INVOKE UpdateHealth, receiverOffset, al
 
 	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
 		mov eax, 10		; 10 ms delay between checks
