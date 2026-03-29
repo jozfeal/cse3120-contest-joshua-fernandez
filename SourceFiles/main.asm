@@ -32,9 +32,15 @@ Main PROC PUBLIC
 	call InitializeUnits
 	
 	.REPEAT
-		mGetUnit ALLY, 0
-		INVOKE TakeTurn, eax
-	.UNTIL (!CARRY?)						; the carry flag is used as a boolean to know if combat should end
+		mov ecx, 0
+		.WHILE (ecx <= 2)
+			mGetUnit ALLY, ecx		; gives turn to each ally unit
+			INVOKE TakeTurn, eax	; given unit takes its turn
+			pushfd					; saves flags to know if game should end
+			inc ecx
+		.ENDW
+		popfd						; check if game must end
+	.UNTIL (!CARRY?)				; the carry flag is used as a boolean to know if combat should end
 
 	INVOKE ExitProcess,0
 Main ENDP
