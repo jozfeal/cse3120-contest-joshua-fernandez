@@ -9,7 +9,7 @@ INCLUDE Units.inc
 INCLUDE Definitions.inc
 
 ExitProcess PROTO, dwExitCode:DWORD
-WriteName PROTO stdcall, unitOffset:DWORD
+TakeTurn PROTO, allyUnit:DWORD
 
 ; places the given char in front of the choice index when prompting
 mPlaceCharForChoice MACRO char:REQ, choice:REQ
@@ -32,27 +32,35 @@ Main PROC PUBLIC
 	call InitializeUnits
 	
 	.REPEAT
-		call ResetScreen
-		mGetUnit ALLY, 0				; name of first ally unit
-		call PromptChoice
-	
-		.IF (al == ATTACK)					; player attacking logic
-			call ResetScreen
-			mGetUnit ALLY, 0				; get unit that is attacking
-			mov edx, eax					; save it so eax can be used with ChooseTarget
-			call ChooseTarget				; get target for ally attack
-			INVOKE AttackUnit, edx, eax		; eax has enemy receiving attack
-			stc
-
-		.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
-			stc
-		.ELSE								; end the game
-			clc
-		.ENDIF
+		mGetUnit ALLY, 0
+		INVOKE TakeTurn, eax
 	.UNTIL (!CARRY?)						; the carry flag is used as a boolean to know if combat should end
 
 	INVOKE ExitProcess,0
 Main ENDP
+
+; ------------------------------
+TakeTurn PROC USES eax edx, allyUnit:DWORD
+; Takes the offset of the ally unit taking a turn
+; Returns nothing, all logic is handled inside method
+; ------------------------------
+	call ResetScreen
+	mov eax, allyUnit	; makes PromptChoice work for ally unit
+	call PromptChoice
+	
+	.IF (al == ATTACK)						; player attacking logic
+		call ResetScreen
+		call ChooseTarget					; get target for ally attack
+		INVOKE AttackUnit, allyUnit, eax	; eax has enemy receiving attack
+		stc
+
+	.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
+		stc
+	.ELSE								; end the game
+		clc
+	.ENDIF
+	ret
+TakeTurn ENDP
 
 ; ------------------------------
 PromptChoice PROC USES edx
