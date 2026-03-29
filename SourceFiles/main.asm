@@ -36,13 +36,14 @@ Main PROC PUBLIC
 		mGetUnit ALLY, 0				; name of first ally unit
 		call PromptChoice
 	
-		.IF (al == ATTACK)					; 1 is the attack choice
+		.IF (al == ATTACK)					; player attacking logic
 			call ResetScreen
-			mGetUnit ALLY, 0
-			mov edx, eax
-			call ChooseTarget
-			INVOKE AttackUnit, edx, eax
+			mGetUnit ALLY, 0				; get unit that is attacking
+			mov edx, eax					; save it so eax can be used with ChooseTarget
+			call ChooseTarget				; get target for ally attack
+			INVOKE AttackUnit, edx, eax		; eax has enemy receiving attack
 			stc
+
 		.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
 			stc
 		.ELSE								; end the game
