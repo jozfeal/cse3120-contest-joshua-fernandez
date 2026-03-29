@@ -40,7 +40,7 @@ Main PROC PUBLIC
 			call ResetScreen
 			mGetUnit ALLY, 0
 			mov edx, eax
-			mGetUnit ENEMY, 1
+			call ChooseTarget
 			INVOKE AttackUnit, edx, eax
 			stc
 		.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
@@ -102,8 +102,8 @@ PromptChoice ENDP
 
 ; ------------------------------
 ChooseTarget PROC USES edx
-; Takes the offset of the character name in EAX
-; Returns number of choice selected in AL
+; Takes no parameters
+; Returns the offset of the target selected in EAX
 ; ------------------------------
 	mGotoxy 0, BOXROW		; start of user entry box
 	mWriteLn "Choose a target:"
@@ -111,15 +111,18 @@ ChooseTarget PROC USES edx
 	mWrite"> "				; starts with the first enemy selected
 	mGetUnit ENEMY, 0
 	INVOKE WriteName, eax	; puts the enemy as a choice
+	call Crlf				; new line not included in WriteName
 	 
-	mWrite" "
+	mWrite"  "
 	mGetUnit ENEMY, 1
 	INVOKE WriteName, eax	; puts the enemy as a choice
-	mWrite" "
+	call Crlf
+	mWrite"  "
 	mGetUnit ENEMY, 2
 	INVOKE WriteName, eax	; puts the enemy as a choice
+	call Crlf
 
-	mov dl, ATTACK			; default choice is attack
+	mov dl, 1				; default choice is first enemy
 	WaitForConfirm:
 		push edx			; ReadKey overrides edx, so it needs to be saved
 		GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
@@ -132,17 +135,19 @@ ChooseTarget PROC USES edx
 		mPlaceCharForChoice " ", dl	; removes old player selection
 
 		.IF (ah == CONFIRM)			; returns current choice selection
-			mov al, dl
+			and edx, 0Fh			; clears all bits above dl so it can be used with mGetUnit
+			dec dl					; makes dl point to correct unit position
+			mGetUnit ENEMY, edx		; returns in eax the offset of the selected unit
 			ret
 		.ELSEIF (ah == UP)			; moves cursor up
 			dec dl
-			.IF (dl < ATTACK)		; wraps around if scrolls above options
-				mov dl, SPELL
+			.IF (dl < 1)			; wraps around if scrolls above options
+				mov dl, 3
 			.ENDIF
 		.ELSEIF (ah == DOWN)		; moves cursor down
 			inc dl
-			.IF (dl > SPELL)		; wraps around if scrolls below options
-				mov dl, ATTACK
+			.IF (dl > 3)			; wraps around if scrolls below options
+				mov dl, 1
 			.ENDIF
 		.ELSE						; no instruction, ends game
 			mov al, -1
