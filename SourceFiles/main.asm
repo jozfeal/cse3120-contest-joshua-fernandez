@@ -46,19 +46,30 @@ Main PROC PUBLIC
 		.WHILE (ecx <= 2)
 			mGetUnit ALLY, ecx		; gives turn to each ally unit
 			INVOKE TakeTurn, eax	; given unit takes its turn
-			pushfd					; saves flags to know if game should end
 			inc ecx
-		.ENDW
-		popfd						; check if game must end
-	.UNTIL (!CARRY?)				; the carry flag is used as a boolean to know if combat should end
 
-	call ResetBox					; clear player box
+			call CheckCombatEnd		; check if any team has won
+			.IF (ZERO?) || (CARRY?)	; if either team won, prepare input box
+				call ResetBox		; clear player box
+				mGotoxy 0, BOXROW
+			.ENDIF
+
+			.IF (ZERO?)				; zero flag indicates enemies win
+				jmp EnemyWin
+			.ELSEIF (CARRY?)		; carry flag indicates allies win
+				jmp AllyWin
+			.ENDIF
+		.ENDW
+	.UNTIL (0)						; infinite loop since game end logic is inside loop
+
 	AllyWin:						; display win message and quit game
 	mWrite "Congratulations, you win!"
+	mWaitForConfirm
+	INVOKE ExitProcess, 0
 
 	EnemyWin:						; display loss message and quit game
 	mWrite "Oh no, you lost!"
-
+	mWaitForConfirm
 	INVOKE ExitProcess,0
 Main ENDP
 
@@ -81,8 +92,6 @@ TakeTurn PROC USES eax edx, allyUnit:DWORD
 
 	.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
 		stc
-	.ELSE								; end the game
-		clc
 	.ENDIF
 	ret
 TakeTurn ENDP
@@ -208,9 +217,9 @@ GetInput ENDP
 CheckCombatEnd PROC USES eax ecx
 ; Takes no parameters
 ; Checks if either team has been fully defeated
-; Sets carry flag ALLY team won, sets direction flag if ENEMY team won
+; Sets carry flag ALLY team won, sets zero flag if ENEMY team won
 ; ------------------------------
-	cld		; clear direction and carry flags first just in case
+	or ecx, 1 	; clear zero and carry flags first just in case
 	clc
 	
 	mov ecx, 0
@@ -222,8 +231,8 @@ CheckCombatEnd PROC USES eax ecx
 		.ENDIF
 		inc ecx
 	.ENDW
-	std		; set direction to indicate enemies won
-	ret		; return immediately without checking for ALLY win
+	test ecx, 0	; set zero flag to indicate enemies won
+	ret			; return immediately without checking for ALLY win
 
 	AllyAlive:
 	mov ecx, 0
@@ -235,7 +244,7 @@ CheckCombatEnd PROC USES eax ecx
 		.ENDIF
 		inc ecx
 	.ENDW
-	stc		; set direction to indicate allies won
+	stc			; set direction to indicate allies won
 
 	EnemyAlive:		; neither team was defeated, don't set any flags
 	ret
