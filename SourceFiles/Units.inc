@@ -12,7 +12,7 @@ UNIT STRUCT
 	curHealth BYTE 20
 	team BYTE ALLY			; team the unit belongs to
 	pos BYTE ?				; position in team of this unit
-	att BYTE 4				; attack
+	att BYTE 21				; attack
 	def BYTE 1				; defense
 	spe BYTE 1				; speed
 Unit ENDS

@@ -35,8 +35,10 @@ ENDM
 mCheckEnd MACRO
 	call CheckCombatEnd		; check if any team has won
 	.IF (ZERO?) || (CARRY?)	; if either team won, prepare input box
+		pushfd				; flags are not preserved by ResetBox and Gotoxy, so they need to be saved
 		call ResetBox		; clear player box
 		mGotoxy 0, BOXROW
+		popfd
 	.ENDIF
 	
 	.IF (ZERO?)				; zero flag indicates enemies win
