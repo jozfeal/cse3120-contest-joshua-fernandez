@@ -83,13 +83,7 @@ PromptChoice PROC USES edx
 
 	mov dl, ATTACK			; default choice is attack
 	WaitForConfirm:
-		push edx			; ReadKey overrides edx, so it needs to be saved
-		GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
-			mov eax, 10		; 10 ms delay between checks
-			call Delay
-			call ReadKey	; keyboard scan code is stored in AH
-			jz GetInput		; does nothing until user enters an input
-		pop edx
+		call GetInput		; get a player input
 
 		mPlaceCharForChoice " ", dl	; removes old player selection
 
@@ -139,13 +133,7 @@ ChooseTarget PROC USES edx
 
 	mov dl, 1				; default choice is first enemy
 	WaitForConfirm:
-		push edx			; ReadKey overrides edx, so it needs to be saved
-		GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
-			mov eax, 10		; 10 ms delay between checks
-			call Delay
-			call ReadKey	; keyboard scan code is stored in AH
-			jz GetInput		; does nothing until user enters an input
-		pop edx
+		call GetInput		; get a player input
 
 		mPlaceCharForChoice " ", dl	; removes old player selection
 
@@ -183,14 +171,15 @@ GetInput PROC USES edx
 		mov eax, 5		; 5 ms delay between checks
 		call Delay
 		call ReadKey	; keyboard scan code is stored in AH
-		jz GetInput		; does nothing until user enters an input
+		jz ScanInput		; does nothing until user enters an input
 
-	.IF (ah == ESCAPE)
+	.IF (ah == ESCAPE)	; quit game no matter where it is at
 		INVOKE ExitProcess, 0
 	.ENDIF
 
-	.IF (ah != CONFIRM) || (ah != UP) || (ah != DOWN) || (ah != LEFT) || (ah != RIGHT)
-		jmp ScanInput
+	; check if input is any of the predetermined key
+	.IF (ah != CONFIRM) && (ah != UP) && (ah != DOWN) && (ah != LEFT) && (ah != RIGHT)
+		jmp ScanInput	; if not, g=read a new key in
 	.ENDIF 
 	ret
 GetInput ENDP

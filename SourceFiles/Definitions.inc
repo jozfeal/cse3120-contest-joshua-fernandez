@@ -15,4 +15,4 @@ RIGHT EQU 4Dh
 UP EQU 48h
 DOWN EQU 50h
 CONFIRM EQU 2Ch	; keyboard scan code for Z key
-ESCAPE EQU 27h	; keyboard scan code for Escape key
+ESCAPE EQU 01h	; keyboard scan code for Escape key
