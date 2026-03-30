@@ -208,13 +208,24 @@ CheckCombatEnd PROC USES eax ecx
 		.IF (BYTE PTR [eax] != 0)
 			jmp AllyAlive				; if any ally has more than 0 health, ALLY team has not been defeated yet
 		.ENDIF
-		
 		inc ecx
 	.ENDW
 	std		; set direction to indicate enemies won
 	ret		; return immediately without checking for ALLY win
 
 	AllyAlive:
+	mov ecx, 0
+	.WHILE (ecx <= 2)					; go through every unit in enemy team
+		mGetUnit ENEMY, ecx
+		mGetUnitField eax, curHealth	; check if health has hit 0
+		.IF (BYTE PTR [eax] != 0)
+			jmp EnemyAlive				; if any ally has more than 0 health, ENEMY team has not been defeated yet
+		.ENDIF
+		inc ecx
+	.ENDW
+	stc		; set direction to indicate allies won
+
+	EnemyAlive:		; neither team was defeated, don't set any flags
 	ret
 CheckCombatEnd ENDP
 
