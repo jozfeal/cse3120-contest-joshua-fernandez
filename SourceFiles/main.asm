@@ -173,4 +173,26 @@ ChooseTarget PROC USES edx
 	jmp WaitForConfirm
 ChooseTarget ENDP
 
+; ------------------------------
+GetInput PROC USES edx
+; Takes no parameters
+; Returns pressed key in AH
+; Exits the game if escape key is pressed
+; ------------------------------
+	ScanInput:			; waits for user to press a key, learnt in book Ch 11.1.4
+		mov eax, 5		; 5 ms delay between checks
+		call Delay
+		call ReadKey	; keyboard scan code is stored in AH
+		jz GetInput		; does nothing until user enters an input
+
+	.IF (ah == ESCAPE)
+		INVOKE ExitProcess, 0
+	.ENDIF
+
+	.IF (ah != CONFIRM) || (ah != UP) || (ah != DOWN) || (ah != LEFT) || (ah != RIGHT)
+		jmp ScanInput
+	.ENDIF 
+	ret
+GetInput ENDP
+
 END Main
