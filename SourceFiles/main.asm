@@ -58,6 +58,13 @@ TakeTurn PROC USES eax edx, allyUnit:DWORD
 		call ResetScreen
 		call ChooseTarget					; get target for ally attack
 		INVOKE AttackUnit, allyUnit, eax	; eax has enemy receiving attack
+
+		WaitForConfirm:
+			call GetInput					; get a player input
+			.IF (ah != CONFIRM)				; do not move on until player confirms
+				jmp WaitForConfirm
+			.ENDIF
+
 		stc
 
 	.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything

@@ -34,15 +34,7 @@ AttackUnit PROC USES edx eax ecx, attackerOffset:DWORD, receiverOffset:DWORD
 	neg eax				; make change negative for use in UpdateHealth
 	INVOKE UpdateHealth, receiverOffset, al
 
-	GetInput:			; waits for user to press a key, learnt in book Ch 11.1.4
-		mov eax, 10		; 10 ms delay between checks
-		call Delay
-		call ReadKey	; keyboard scan code is stored in AH
-		jz GetInput		; does nothing until user enters an input
-	.IF (ah == CONFIRM)	; only continues once CONFIRM is pressed
-		ret
-	.ENDIF
-	jmp GetInput		; forces CONFIRM
+	ret
 AttackUnit ENDP
 
 END
