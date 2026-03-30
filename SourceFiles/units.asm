@@ -104,10 +104,20 @@ RandomTarget PROC USES edx ecx
 		mGetUnit ALLY, ecx
 		mGetUnitField eax, curHealth
 		mov dl, BYTE PTR [eax]	; get their current health
-		mov al, 255
-		sub al, dl				; get inverse of current health relative to maximum possible health (BYTE)
-		movzx dx, al			; turn value into word for use later
-		mov weight[ecx * 2], dx		; store as weight for this unit
+		
+		mGetUnit ALLY, ecx
+		mGetUnitField eax, maxHealth
+		movzx ax, BYTE PTR [eax]	; get their max health
+		
+		div dl					; divide maxHealth/curHealth
+		push eax				; store division result
+		movzx ax, al			; get quotient, lower health = higher weight = higher chance to be targeted
+		mov dx, 10
+		mul dx					; multiply quotient by 10, giving it a heavier weight than remainder
+		pop edx
+		movzx dx, dh			; get remainder into dx
+		add ax, dx				; add remainder to weight
+		mov weight[ecx * 2], ax		; store as weight for this unit
 		
 		inc ecx
 	.ENDW
