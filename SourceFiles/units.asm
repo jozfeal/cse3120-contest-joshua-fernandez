@@ -92,5 +92,25 @@ UpdateHealth PROC USES eax edx, unitOffset:DWORD, change:SBYTE
 	ret
 UpdateHealth ENDP
 
+; ------------------------------
+RandomTarget PROC USES eax edx ecx
+; Takes no parameters
+; Gives a random target from ALLY team for an enemy to target
+; Uses weighted probability, lower HP enemies are more likely to be chosen
+; ------------------------------
+		LOCAL weight[3]:BYTE	; weight for each ally to be picked
+	mov ecx, 0
+	.WHILE (ecx <= 2)			; go through every ally unit
+		mGetUnit ALLY, ecx
+		mGetUnitField eax, curHealth
+		mov dl, BYTE PTR [eax]	; get their current health
+		mov al, 255
+		sub al, dl				; get inverse of current health relative to maximum possible health (BYTE)
+		mov weight[ecx], al		; store as weight for this unit
+		
+		inc ecx
+	.ENDW
+	ret
+RandomTarget ENDP
 
 END

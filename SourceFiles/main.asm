@@ -54,7 +54,8 @@ Main PROC PUBLIC
 	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
 	INVOKE SetConsoleCursorInfo, eax, ADDR cursorInfo	; makes cursor invisible in cmd
 	
-	call InitializeUnits
+	call Randomize			; gets a new random seed for the rng
+	call InitializeUnits	; initializes basic units to use
 	
 	.REPEAT
 		mov ecx, 0
