@@ -21,6 +21,16 @@ mPlaceCharForChoice MACRO char:REQ, choice:REQ
 	pop edx
 ENDM
 
+; waits for player to press the confirm key before continuing
+mWaitForConfirm MACRO
+	LOCAL WaitForConfirm
+	WaitForConfirm:
+		call GetInput					; get a player input
+		.IF (ah != CONFIRM)				; do not move on until player confirms
+			jmp WaitForConfirm
+		.ENDIF
+ENDM
+
 .data
 cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, learnt in Ch 11.1.10
 
@@ -42,6 +52,13 @@ Main PROC PUBLIC
 		popfd						; check if game must end
 	.UNTIL (!CARRY?)				; the carry flag is used as a boolean to know if combat should end
 
+	call ResetBox					; clear player box
+	AllyWin:						; display win message and quit game
+	mWrite "Congratulations, you win!"
+
+	EnemyWin:						; display loss message and quit game
+	mWrite "Oh no, you lost!"
+
 	INVOKE ExitProcess,0
 Main ENDP
 
@@ -58,12 +75,7 @@ TakeTurn PROC USES eax edx, allyUnit:DWORD
 		call ResetScreen
 		call ChooseTarget					; get target for ally attack
 		INVOKE AttackUnit, allyUnit, eax	; eax has enemy receiving attack
-
-		WaitForConfirm:
-			call GetInput					; get a player input
-			.IF (ah != CONFIRM)				; do not move on until player confirms
-				jmp WaitForConfirm
-			.ENDIF
+		mWaitForConfirm
 
 		stc
 
