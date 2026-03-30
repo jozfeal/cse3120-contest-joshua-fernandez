@@ -31,6 +31,21 @@ mWaitForConfirm MACRO
 		.ENDIF
 ENDM
 
+; to be used inside Main, checks for end conditions and jumps to appropiate instruction
+mCheckEnd MACRO
+	call CheckCombatEnd		; check if any team has won
+	.IF (ZERO?) || (CARRY?)	; if either team won, prepare input box
+		call ResetBox		; clear player box
+		mGotoxy 0, BOXROW
+	.ENDIF
+	
+	.IF (ZERO?)				; zero flag indicates enemies win
+		jmp EnemyWin
+	.ELSEIF (CARRY?)		; carry flag indicates allies win
+		jmp AllyWin
+	.ENDIF
+ENDM
+
 .data
 cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, learnt in Ch 11.1.10
 
@@ -48,17 +63,7 @@ Main PROC PUBLIC
 			INVOKE TakeTurn, eax	; given unit takes its turn
 			inc ecx
 
-			call CheckCombatEnd		; check if any team has won
-			.IF (ZERO?) || (CARRY?)	; if either team won, prepare input box
-				call ResetBox		; clear player box
-				mGotoxy 0, BOXROW
-			.ENDIF
-
-			.IF (ZERO?)				; zero flag indicates enemies win
-				jmp EnemyWin
-			.ELSEIF (CARRY?)		; carry flag indicates allies win
-				jmp AllyWin
-			.ENDIF
+			mCheckEnd
 		.ENDW
 	.UNTIL (0)						; infinite loop since game end logic is inside loop
 
@@ -88,10 +93,8 @@ TakeTurn PROC USES eax edx, allyUnit:DWORD
 		INVOKE AttackUnit, allyUnit, eax	; eax has enemy receiving attack
 		mWaitForConfirm
 
-		stc
-
 	.ELSEIF (al == DEFEND) || (al == SPELL)	; don't do anything
-		stc
+		nop
 	.ENDIF
 	ret
 TakeTurn ENDP
@@ -207,7 +210,7 @@ GetInput PROC USES edx
 
 	; check if input is any of the predetermined key
 	.IF (ah != CONFIRM) && (ah != UP) && (ah != DOWN) && (ah != LEFT) && (ah != RIGHT)
-		jmp ScanInput	; if not, g=read a new key in
+		jmp ScanInput	; if not, read a new key in
 	.ENDIF 
 	ret
 GetInput ENDP
