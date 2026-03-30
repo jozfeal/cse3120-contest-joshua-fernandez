@@ -58,12 +58,24 @@ Main PROC PUBLIC
 	call InitializeUnits	; initializes basic units to use
 	
 	.REPEAT
-		mov ecx, 0
+		mov ecx, 0					; player turn
 		.WHILE (ecx <= 2)
 			mGetUnit ALLY, ecx		; gives turn to each ally unit
 			INVOKE TakeTurn, eax	; given unit takes its turn
+			
 			inc ecx
+			mCheckEnd
+		.ENDW
 
+		mov ecx, 0					; enemy turn
+		.WHILE (ecx <= 2)
+			mGetUnit ENEMY, ecx		; gives turn to each enemy unit
+			mov edx, eax			; store attacking enemy
+			call RandomTarget		; get ally to attack
+			INVOKE AttackUnit, edx, eax	; enemy attacks selected ally
+			mWaitForConfirm
+
+			inc ecx
 			mCheckEnd
 		.ENDW
 	.UNTIL (0)						; infinite loop since game end logic is inside loop

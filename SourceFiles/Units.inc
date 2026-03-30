@@ -17,8 +17,9 @@ UNIT STRUCT
 	spe BYTE 1				; speed
 Unit ENDS
 
-InitializeUnits PROTO stdcall				; stdcall is needed here to avoid compile time error
+InitializeUnits PROTO STDCALL				; stdcall is needed here to avoid compile time error
 UpdateHealth PROTO STDCALL, unitOffset:DWORD, change:SBYTE
+RandomTarget PROTO STDCALL
 
 EXTERNDEF allies:UNIT
 EXTERNDEF enemies:UNIT
