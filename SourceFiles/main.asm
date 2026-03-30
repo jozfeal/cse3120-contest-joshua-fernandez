@@ -191,4 +191,31 @@ GetInput PROC USES edx
 	ret
 GetInput ENDP
 
+
+; ------------------------------
+CheckCombatEnd PROC USES eax ecx
+; Takes no parameters
+; Checks if either team has been fully defeated
+; Sets carry flag ALLY team won, sets direction flag if ENEMY team won
+; ------------------------------
+	cld		; clear direction and carry flags first just in case
+	clc
+	
+	mov ecx, 0
+	.WHILE (ecx <= 2)					; go through every unit in ally team
+		mGetUnit ALLY, ecx
+		mGetUnitField eax, curHealth	; check if health has hit 0
+		.IF (BYTE PTR [eax] != 0)
+			jmp AllyAlive				; if any ally has more than 0 health, ALLY team has not been defeated yet
+		.ENDIF
+		
+		inc ecx
+	.ENDW
+	std		; set direction to indicate enemies won
+	ret		; return immediately without checking for ALLY win
+
+	AllyAlive:
+	ret
+CheckCombatEnd ENDP
+
 END Main
