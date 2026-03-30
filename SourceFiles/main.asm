@@ -146,9 +146,6 @@ PromptChoice PROC USES edx
 			.IF (dl > SPELL)		; wraps around if scrolls below options
 				mov dl, ATTACK
 			.ENDIF
-		.ELSE						; no instruction, ends game
-			mov al, -1
-			ret
 		.ENDIF
 
 		mPlaceCharForChoice ">", dl	; highlights new player choice
@@ -198,9 +195,6 @@ ChooseTarget PROC USES edx
 			.IF (dl > 3)			; wraps around if scrolls below options
 				mov dl, 1
 			.ENDIF
-		.ELSE						; no instruction, ends game
-			mov al, -1
-			ret
 		.ENDIF
 
 		mPlaceCharForChoice ">", dl	; highlights new player choice
