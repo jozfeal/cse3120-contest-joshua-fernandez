@@ -107,21 +107,23 @@ RandomTarget PROC USES edx ecx
 		mov al, 255
 		sub al, dl				; get inverse of current health relative to maximum possible health (BYTE)
 		movzx dx, al			; turn value into word for use later
-		mov weight[ecx], dx		; store as weight for this unit
+		mov weight[ecx * 2], dx		; store as weight for this unit
 		
 		inc ecx
 	.ENDW
 
 	and eax, 0			; clear upper eax to prevent errors
 	mov ax, weight[0]	; add all weights together to get total range
-	add ax, weight[1]	; ax is used because if total weight exceeds 255, it breaks
-	add ax, weight[2]
+	add ax, weight[2]	; ax is used because if total weight exceeds 255, it breaks
+	add ax, weight[4]
 	call RandomRange
 	inc ax				; makes range 1-n instead of 0-(n-1) so that weights can work correctly
 
+	mov dx, weight[0]	; put first two eights in dx for elseif later
+	add dx, weight[2]
 	.IF (ax <= weight[0])
 		mov ecx, 0		; first ally unit is chosen
-	.ELSEIF (ax <= weight[1] + weight[0])
+	.ELSEIF (ax <= dx)
 		mov ecx, 1		; second ally unit is chosen
 	.ELSE
 		mov ecx, 2		; third ally unit is chosen
