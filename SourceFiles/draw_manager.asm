@@ -108,6 +108,7 @@ PrintUnits ENDP
 WriteName PROC USES eax edx, unitOffset:DWORD
 ; Takes the address of a unit
 ; Returns nothing; writes unit's name cyan or red, depending on team
+; If unit is dead, writes name in gray instead
 ;------------------------------
 	and eax, 0			; clear	eax first
 	call GetTextColor	; get current colors used
@@ -124,6 +125,17 @@ WriteName PROC USES eax edx, unitOffset:DWORD
 		add eax, lightRed	; add red foreground for enemies
 	.ELSE
 		pop eax			; fail safe, simply makes name black
+	.ENDIF
+	
+	push eax			; save color given
+	mGetUnitField unitOffset, curHealth
+	mov dl, BYTE PTR [eax]	; get current health
+	.IF (dl == 0)			; if unit is dead, print in gray instead
+		pop eax
+		and eax, 11110000	; clears foreground colors bits
+		add eax, gray		; switches color to gray
+	.ELSE
+		pop eax				; if alive, keep designated team color
 	.ENDIF
 	call SetTextColor	; make name the correct color
 
