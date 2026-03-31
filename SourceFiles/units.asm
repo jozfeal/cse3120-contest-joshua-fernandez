@@ -163,4 +163,13 @@ SetStats PROC USES edx ecx, unitOffset:DWORD
 	mGetUnitField unitOffset, roleID
 	ret
 SetStats ENDP
+
+; ------------------------------
+SetRole PROC USES edx ecx, unitOffset:DWORD
+; Takes the unit whose role name will be set
+; Places role name in role field of unit based on their roleID
+; ------------------------------
+	mGetUnitField unitOffset, roleID
+	ret
+SetRole ENDP
 END

@@ -25,6 +25,7 @@ Unit ENDS
 InitializeUnits PROTO STDCALL				; stdcall is needed here to avoid compile time error
 UpdateHealth PROTO STDCALL, unitOffset:DWORD, change:SBYTE
 RandomTarget PROTO STDCALL
+SetRole PROTO STDCALL, unitOffset:DWORD
 
 EXTERNDEF allies:UNIT
 EXTERNDEF enemies:UNIT
@@ -81,17 +82,21 @@ mMoveUnit MACRO unitObj:REQ, teamEnum:REQ, position:REQ
 ENDM
 
 ; Macro to make a new ally unit, places it in the corresponding position
-mAllyUnit MACRO objName:REQ, name:REQ, role:REQ, pos:REQ
+mAllyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	.data
-	objName UNIT <name, role>
+	objName UNIT <name, roleID>
 	.code
+	mGetUnit ALLY, pos
+	INVOKE SetRole, eax
 	mMoveUnit objName, ALLY, pos
 ENDM
 
 ; Macro to make a new enemy unit, places it in the corresponding position
-mEnemyUnit MACRO objName:REQ, name:REQ, role:REQ, pos:REQ
+mEnemyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	.data
-	objName UNIT <name, role>
+	objName UNIT <name, roleID>
 	.code
+	mGetUnit ENEMY, pos
+	INVOKE SetRole, eax
 	mMoveUnit objName, ENEMY, pos
 ENDM
