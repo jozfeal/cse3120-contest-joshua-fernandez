@@ -3,11 +3,16 @@
 
 ALLY EQU 0
 ENEMY EQU 1
+; role IDS
+Warrior EQU 0
+Archer EQU 1
+Knight EQU 2
 
 ; units are made of this structure
 UNIT STRUCT
 	unitName BYTE 11 DUP(0)	; display name up to 10 chars
 	role BYTE 11 DUP(0)		; display role up to 10 chars
+	roleID BYTE 1			; corresponding ID for role
 	maxHealth BYTE 20		; health values
 	curHealth BYTE 20
 	team BYTE ALLY			; team the unit belongs to

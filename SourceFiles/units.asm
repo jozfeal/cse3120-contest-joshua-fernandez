@@ -154,4 +154,13 @@ RandomTarget PROC USES edx ecx
 	ret
 RandomTarget ENDP
 
+; ------------------------------
+SetStats PROC USES edx ecx, unitOffset:DWORD
+; Takes the unit whose stats will be set
+; Gives the units its starting stats based off their class
+; There is a random variance to their stats
+; ------------------------------
+	mGetUnitField unitOffset, roleID
+	ret
+SetStats ENDP
 END
