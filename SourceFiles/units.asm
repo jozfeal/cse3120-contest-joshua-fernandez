@@ -184,6 +184,20 @@ SetStats PROC USES eax edx ecx esi edi, unitOffset:DWORD
 	mov	ecx, 4					; all stats are back to back in UNIT, and there are 4 stats
 	rep movsb
 
+	mgetUnitField unitOffset, maxHealth
+	mov ecx, 0
+	.WHILE (ecx <= 3)			; go through every stat the unit has
+		push eax				; save the unit's starting stats address
+		mov eax, 7				; get a range of 7 numbers
+		call RandomRange
+		sub eax, 3				; forces the range result -3 to +3
+		mov dl, al				; save result
+
+		pop eax
+		add BYTE PTR [eax + ecx], dl	; change stat by number drawn
+		inc ecx
+	.ENDW
+
 	mGetUnitField unitOffset, maxHealth
 	mov dl, BYTE PTR [eax]		; gets newly set max health
 	mGetUnitField unitOffset, curHealth
