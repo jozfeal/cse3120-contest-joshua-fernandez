@@ -11,8 +11,8 @@ KNIGHT EQU 2
 ; units are made of this structure
 UNIT STRUCT
 	unitName BYTE 11 DUP(0)	; display name up to 10 chars
-	role BYTE 11 DUP(0)		; display role up to 10 chars
 	roleID BYTE 1			; corresponding ID for role
+	role BYTE 11 DUP(0)		; display role up to 10 chars
 	maxHealth BYTE 20		; health values
 	curHealth BYTE 20
 	team BYTE ALLY			; team the unit belongs to
@@ -86,9 +86,9 @@ mAllyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	.data
 	objName UNIT <name, roleID>
 	.code
+	mMoveUnit objName, ALLY, pos
 	mGetUnit ALLY, pos
 	INVOKE SetRole, eax
-	mMoveUnit objName, ALLY, pos
 ENDM
 
 ; Macro to make a new enemy unit, places it in the corresponding position
@@ -96,7 +96,7 @@ mEnemyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	.data
 	objName UNIT <name, roleID>
 	.code
+	mMoveUnit objName, ENEMY, pos
 	mGetUnit ENEMY, pos
 	INVOKE SetRole, eax
-	mMoveUnit objName, ENEMY, pos
 ENDM

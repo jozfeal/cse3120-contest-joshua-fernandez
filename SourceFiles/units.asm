@@ -24,12 +24,12 @@ knightName BYTE "Knight", 5 DUP(0)
 .code
 InitializeUnits PROC
 	; Initializes constant characters to test with for each team
-	mAllyUnit ally1, "Sylvain", "Warrior", 0
-	mAllyUnit ally2, "Dimitri", "Knight", 1
-	mAllyUnit ally3, "Ashe", "Archer", 2
-	mEnemyUnit enemy1, "Bernie", "Archer", 0
-	mEnemyUnit enemy2, "Caspar", "Warrior", 1
-	mEnemyUnit enemy3, "Edelgard", "Knight", 2
+	mAllyUnit ally1, "Sylvain", WARRIOR, 0
+	mAllyUnit ally2, "Dimitri", KNIGHT, 1
+	mAllyUnit ally3, "Ashe", ARCHER, 2
+	mEnemyUnit enemy1, "Bernie", ARCHER, 0
+	mEnemyUnit enemy2, "Caspar", WARRIOR, 1
+	mEnemyUnit enemy3, "Edelgard", KNIGHT, 2
 
 	ret
 InitializeUnits ENDP
