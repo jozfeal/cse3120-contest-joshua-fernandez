@@ -162,17 +162,37 @@ RandomTarget PROC USES edx ecx
 RandomTarget ENDP
 
 ; ------------------------------
-SetStats PROC USES edx ecx, unitOffset:DWORD
+SetStats PROC USES eax edx ecx esi edi, unitOffset:DWORD
 ; Takes the unit whose stats will be set
 ; Gives the units its starting stats based off their class
 ; There is a random variance to their stats
 ; ------------------------------
 	mGetUnitField unitOffset, roleID
+	mov dl, BYTE PTR [eax]		; gets this unit's roleID
+	.IF (dl == WARRIOR)			
+		mov esi, OFFSET warriorStats
+	.ELSEIF (dl == ARCHER)
+		mov esi, OFFSET archerStats
+	.ELSEIF (dl == KNIGHT)
+		mov esi, OFFSET knightStats
+	.ELSE						; failsafe, puts no role
+		mov esi, OFFSET noRoleStats
+	.ENDIF
+	
+	mGetUnitField unitOffset, maxHealth
+	mov edi, eax				; puts the destination for the role stats
+	mov	ecx, 4					; all stats are back to back in UNIT, and there are 4 stats
+	rep movsb
+
+	mGetUnitField unitOffset, maxHealth
+	mov dl, BYTE PTR [eax]		; gets newly set max health
+	mGetUnitField unitOffset, curHealth
+	mov BYTE PTR [eax], dl		; initializes current health to new max health
 	ret
 SetStats ENDP
 
 ; ------------------------------
-SetRole PROC USES edx ecx, unitOffset:DWORD
+SetRole PROC USES eax edx ecx esi edi, unitOffset:DWORD
 ; Takes the unit whose role name will be set
 ; Places role name in role field of unit based on their roleID
 ; ------------------------------

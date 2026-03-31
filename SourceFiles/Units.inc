@@ -13,10 +13,10 @@ UNIT STRUCT
 	unitName BYTE 11 DUP(0)	; display name up to 10 chars
 	roleID BYTE 1			; corresponding ID for role
 	role BYTE 11 DUP(0)		; display role up to 10 chars
-	maxHealth BYTE 20		; health values
-	curHealth BYTE 20
 	team BYTE ALLY			; team the unit belongs to
 	pos BYTE ?				; position in team of this unit
+	curHealth BYTE 20		; health values
+	maxHealth BYTE 20		
 	att BYTE 19				; attack
 	def BYTE 1				; defense
 	spe BYTE 1				; speed
@@ -26,6 +26,7 @@ InitializeUnits PROTO STDCALL				; stdcall is needed here to avoid compile time 
 UpdateHealth PROTO STDCALL, unitOffset:DWORD, change:SBYTE
 RandomTarget PROTO STDCALL
 SetRole PROTO STDCALL, unitOffset:DWORD
+SetStats PROTO STDCALL, unitOffset:DWORD
 
 EXTERNDEF allies:UNIT
 EXTERNDEF enemies:UNIT
@@ -89,6 +90,7 @@ mAllyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	mMoveUnit objName, ALLY, pos
 	mGetUnit ALLY, pos
 	INVOKE SetRole, eax
+	INVOKE SetStats, eax
 ENDM
 
 ; Macro to make a new enemy unit, places it in the corresponding position
@@ -99,4 +101,5 @@ mEnemyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	mMoveUnit objName, ENEMY, pos
 	mGetUnit ENEMY, pos
 	INVOKE SetRole, eax
+	INVOKE SetStats, eax
 ENDM
