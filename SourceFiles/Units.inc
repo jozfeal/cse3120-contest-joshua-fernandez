@@ -27,6 +27,8 @@ UpdateHealth PROTO STDCALL, unitOffset:DWORD, change:SBYTE
 RandomTarget PROTO STDCALL
 SetRole PROTO STDCALL, unitOffset:DWORD
 SetStats PROTO STDCALL, unitOffset:DWORD
+CreateUnit PROTO STDCALL, nameOffset:DWORD, role:BYTE
+MoveUnit PROTO STDCALL, unitOffset:DWORD, team:BYTE, position:BYTE
 
 EXTERNDEF allies:UNIT
 EXTERNDEF enemies:UNIT

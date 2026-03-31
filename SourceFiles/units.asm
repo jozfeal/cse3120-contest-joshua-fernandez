@@ -10,11 +10,16 @@ allies UNIT 3 DUP (<>)
 enemies UNIT 3 DUP(<>)
 baseUnit UNIT <>		; default unit to be used for new unit creation from which data is copied
 
+; default enemy names to use for demo
+enemy1Name BYTE "Camus", 6 DUP(0)
+enemy2Name BYTE "Bob", 8 DUP(0)
+enemy3Name BYTE "Saphira", 4 DUP(0)
+
 ; base stats for each of the classes in order: maxHP, att, def, spe
 noRoleStats BYTE 20, 5, 5, 5		; failsafe
-warriorStats BYTE 55, 25, 15, 10
-archerStats BYTE 35, 32, 12, 13
-knightStats BYTE 65, 21, 20, 6
+warriorStats BYTE 55, 31, 15, 10
+archerStats BYTE 35, 38, 12, 13
+knightStats BYTE 65, 27, 20, 6
 
 ; role names for each of the classes, wih trailing 0's up to 11 chars
 noRoleName BYTE "No Role", 4 DUP(0)		; failsafe
@@ -30,7 +35,9 @@ InitializeUnits PROC
 	mAllyUnit ally3, "Ashe", ARCHER, 2
 	mEnemyUnit enemy1, "Bernie", ARCHER, 0
 	mEnemyUnit enemy2, "Caspar", WARRIOR, 1
-	mEnemyUnit enemy3, "Edelgard", KNIGHT, 2
+;	mEnemyUnit enemy3, "Edelgard", KNIGHT, 2
+	INVOKE CreateUnit, ADDR enemy3Name, KNIGHT
+	INVOKE MoveUnit, ADDR baseUnit, ENEMY, 2
 
 	ret
 InitializeUnits ENDP
@@ -254,17 +261,17 @@ MoveUnit PROC USES eax edx ecx esi edi, unitOffset:DWORD, team:BYTE, position:BY
 ; Takes a unit and the deisred team + position
 ; Copies all the unit's data to the team slot and assigns it the team and pos fields
 ; ------------------------------
-	mov dl, team
-	mGetUnitField unitOffset, team
-	mov BYTE PTR [eax], dl			; assign new team value
 	mov dl, position
 	mGetUnitField unitOffset, pos
 	mov BYTE PTR [eax], dl			; assign new position value
+	mov dl, team
+	mGetUnitField unitOffset, team
+	mov BYTE PTR [eax], dl			; assign new team value
 
 	mov esi, unitOffset				; move data from object instance
-	.IF (eax == ALLY)				; places unit in ally team offset
+	.IF (dl == ALLY)				; places unit in ally team offset
 		lea edi, allies
-	.ELSEIF (eax == ENEMY)			; places unit in enemy team offset
+	.ELSEIF (dl == ENEMY)			; places unit in enemy team offset
 		lea edi, enemies
 	.ENDIF
 	mov ecx, 0						; clear ecx
