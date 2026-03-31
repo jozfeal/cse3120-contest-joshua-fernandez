@@ -157,6 +157,8 @@ ChooseTarget PROC USES edx ecx
 ; Takes no parameters
 ; Returns the offset of the target selected in EAX
 ; ------------------------------
+		LOCAL choice[3]:DWORD
+
 	mGotoxy 0, BOXROW		; start of user entry box
 	mWriteLn "Choose a target:"
 
@@ -168,6 +170,7 @@ ChooseTarget PROC USES edx ecx
 	.IF (dl != 0)				; only give choice if unit is alive
 		mWrite"  "				; starts with the first enemy selected
 		mGetUnit ENEMY, 0
+		mov choice[ecx * 4], eax	; stores in choices
 		INVOKE WriteName, eax	; puts the enemy as a choice
 		call Crlf				; new line not included in WriteName
 		inc cl					; count up how many units are being shown
@@ -179,6 +182,7 @@ ChooseTarget PROC USES edx ecx
 	.IF (dl != 0)				; only give choice if unit is alive
 		mWrite"  "
 		mGetUnit ENEMY, 1
+		mov choice[ecx * 4], eax
 		INVOKE WriteName, eax	; puts the enemy as a choice
 		call Crlf
 		inc cl					; count up how many units are being shown
@@ -190,6 +194,7 @@ ChooseTarget PROC USES edx ecx
 	.IF (dl != 0)				; only give choice if unit is alive
 		mWrite"  "
 		mGetUnit ENEMY, 2
+		mov choice[ecx * 4], eax
 		INVOKE WriteName, eax	; puts the enemy as a choice
 		call Crlf
 		inc cl					; count up how many units are being shown
@@ -203,9 +208,9 @@ ChooseTarget PROC USES edx ecx
 		mPlaceCharForChoice " ", dl	; removes old player selection
 
 		.IF (ah == CONFIRM)			; returns current choice selection
-			and edx, 0Fh			; clears all bits above dl so it can be used with mGetUnit
-			dec dl					; makes dl point to correct unit position
-			mGetUnit ENEMY, edx		; returns in eax the offset of the selected unit
+			and edx, 0Fh			; clears all bits above dl so it can be used as index
+			dec edx					; makes edx point to correct unit position
+			mov eax, choice[edx * 4]	; gets enemy choice corresponding to cursor position
 			ret
 		.ELSEIF (ah == UP)			; moves cursor up
 			dec dl
