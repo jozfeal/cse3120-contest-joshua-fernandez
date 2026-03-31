@@ -62,25 +62,41 @@ Main PROC PUBLIC
 	.REPEAT
 		mov ecx, 0					; player turn
 		.WHILE (ecx <= 2)
+			mGetUnit ALLY, ecx
+			mGetUnitField eax, curHealth
+			mov dl, BYTE PTR [eax]	; get health of this unit
+			.IF (dl == 0)			; if unit is dead, do not perform its turn
+				jmp SkipAllyTurn
+			.ENDIF
+			
 			mGetUnit ALLY, ecx		; gives turn to each ally unit
 			INVOKE TakeTurn, eax	; given unit takes its turn
 			
+			SkipAllyTurn:
 			inc ecx
 			mCheckEnd
-			call PrintUnits
+			call PrintUnits			; resets display after each turn
 		.ENDW
 
 		mov ecx, 0					; enemy turn
 		.WHILE (ecx <= 2)
+			mGetUnit ENEMY, ecx
+			mGetUnitField eax, curHealth
+			mov dl, BYTE PTR [eax]	; get health of this unit
+			.IF (dl == 0)			; if unit is dead, do not perform its turn
+				jmp SkipEnemyTurn
+			.ENDIF
+
 			mGetUnit ENEMY, ecx		; gives turn to each enemy unit
 			mov edx, eax			; store attacking enemy
 			call RandomTarget		; get ally to attack
 			INVOKE AttackUnit, edx, eax	; enemy attacks selected ally
 			mWaitForConfirm
 
+			SkipEnemyTurn:
 			inc ecx
 			mCheckEnd
-			call PrintUnits
+			call PrintUnits			; resets display after each turn
 		.ENDW
 	.UNTIL (0)						; infinite loop since game end logic is inside loop
 
