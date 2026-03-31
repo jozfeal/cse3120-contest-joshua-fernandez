@@ -248,4 +248,33 @@ CreateUnit PROC USES eax edx ecx esi edi, nameOffset:DWORD, role:BYTE
 	INVOKE SetRole, ADDR baseUnit	; initializes its stats with new role
 	ret
 CreateUnit ENDP
+
+; ------------------------------
+MoveUnit PROC USES eax edx ecx esi edi, unitOffset:DWORD, team:BYTE, position:BYTE
+; Takes a unit and the deisred team + position
+; Copies all the unit's data to the team slot and assigns it the team and pos fields
+; ------------------------------
+	mov dl, team
+	mGetUnitField unitOffset, team
+	mov BYTE PTR [eax], dl			; assign new team value
+	mov dl, position
+	mGetUnitField unitOffset, pos
+	mov BYTE PTR [eax], dl			; assign new position value
+
+	mov esi, unitOffset				; move data from object instance
+	.IF (eax == ALLY)				; places unit in ally team offset
+		lea edi, allies
+	.ELSEIF (eax == ENEMY)			; places unit in enemy team offset
+		lea edi, enemies
+	.ENDIF
+	mov ecx, 0						; clear ecx
+	mov cl, position				; iterate for once for each position 
+	IncreaseOffset:
+		add edi, SIZEOF UNIT		; skip one unit in the team position
+		loop IncreaseOffset
+
+	mov ecx, SIZEOF UNIT			; copy all of unit's fields
+	rep movsb						; copy unit to place in team
+	ret
+MoveUnit ENDP
 END
