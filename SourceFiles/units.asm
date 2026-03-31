@@ -9,15 +9,20 @@ INCLUDE DrawManager.inc
 allies UNIT 3 DUP (<>)
 enemies UNIT 3 DUP(<>)
 
+; base stats for each of the classes in order: maxHP, att, def, spe
+warriorStats BYTE 55, 25, 15, 10
+archerStats BYTE 35, 32, 12, 13
+knightStats BYTE 65, 21, 20, 6
+
 .code
 InitializeUnits PROC
 	; Initializes constant characters to test with for each team
-	mAllyUnit ally1, "Edelgard", "Fighter", 0
-	mAllyUnit ally2, "Dimitri", "Soldier", 1
-	mAllyUnit ally3, "Claude", "Archer", 2
-	mEnemyUnit enemy1, "Jeritza", "Paladin", 0
-	mEnemyUnit enemy2, "Rhea", "Dragon", 1
-	mEnemyUnit enemy3, "Nemesis", "Liberator", 2
+	mAllyUnit ally1, "Sylvain", "Warrior", 0
+	mAllyUnit ally2, "Dimitri", "Knight", 1
+	mAllyUnit ally3, "Ashe", "Archer", 2
+	mEnemyUnit enemy1, "Bernie", "Archer", 0
+	mEnemyUnit enemy2, "Caspar", "Warrior", 1
+	mEnemyUnit enemy3, "Edelgard", "Knight", 2
 
 	ret
 InitializeUnits ENDP
