@@ -4,9 +4,9 @@
 ALLY EQU 0
 ENEMY EQU 1
 ; role IDS
-Warrior EQU 0
-Archer EQU 1
-Knight EQU 2
+WARRIOR EQU 0
+ARCHER EQU 1
+KNIGHT EQU 2
 
 ; units are made of this structure
 UNIT STRUCT

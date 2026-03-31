@@ -10,9 +10,16 @@ allies UNIT 3 DUP (<>)
 enemies UNIT 3 DUP(<>)
 
 ; base stats for each of the classes in order: maxHP, att, def, spe
+noRoleStats BYTE 20, 5, 5, 5		; failsafe
 warriorStats BYTE 55, 25, 15, 10
 archerStats BYTE 35, 32, 12, 13
 knightStats BYTE 65, 21, 20, 6
+
+; role names for each of the classes
+noRoleName BYTE "No Role"			; failsafe
+warriorName BYTE "Warrior"
+archerName BYTE "Archer"
+knightName BYTE "Knight"
 
 .code
 InitializeUnits PROC
@@ -170,6 +177,16 @@ SetRole PROC USES edx ecx, unitOffset:DWORD
 ; Places role name in role field of unit based on their roleID
 ; ------------------------------
 	mGetUnitField unitOffset, roleID
+	mov dl, BYTE PTR [eax]		; gets this unit's roleID
+	.IF (dl == WARRIOR)			; puts in esi the corresponding name for each of the classes
+		mov esi, OFFSET warriorName
+	.ELSEIF (dl == ARCHER)
+		mov esi, OFFSET archerName
+	.ELSEIF (dl == KNIGHT)
+		mov esi, OFFSET knightName
+	.ELSE						; failsafe, puts no role
+		mov esi, OFFSET noRoleName
+	.ENDIF
 	ret
 SetRole ENDP
 END
