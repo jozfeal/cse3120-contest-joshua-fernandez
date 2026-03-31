@@ -90,7 +90,6 @@ mAllyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	mMoveUnit objName, ALLY, pos
 	mGetUnit ALLY, pos
 	INVOKE SetRole, eax
-	INVOKE SetStats, eax
 ENDM
 
 ; Macro to make a new enemy unit, places it in the corresponding position
@@ -101,5 +100,4 @@ mEnemyUnit MACRO objName:REQ, name:REQ, roleID:REQ, pos:REQ
 	mMoveUnit objName, ENEMY, pos
 	mGetUnit ENEMY, pos
 	INVOKE SetRole, eax
-	INVOKE SetStats, eax
 ENDM

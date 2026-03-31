@@ -8,6 +8,7 @@ INCLUDE DrawManager.inc
 .data
 allies UNIT 3 DUP (<>)
 enemies UNIT 3 DUP(<>)
+baseUnit UNIT <>		; default unit to be used for new unit creation from which data is copied
 
 ; base stats for each of the classes in order: maxHP, att, def, spe
 noRoleStats BYTE 20, 5, 5, 5		; failsafe
@@ -225,7 +226,26 @@ SetRole PROC USES eax edx ecx esi edi, unitOffset:DWORD
 	mGetUnitField unitOffset, role
 	mov edi, eax				; puts the destination for the role name
 	mov	ecx, 11					; size of name buffers
+
+	INVOKE SetStats, unitOffset	; when role is changed, update stats
 	rep movsb
 	ret
 SetRole ENDP
+
+; ------------------------------
+CreateUnit PROC USES eax edx ecx esi edi, nameOffset:DWORD, role:BYTE
+; Takes a name and roleID
+; Creates a new instance of a unit with its data in baseUnit
+; ------------------------------
+	mov esi, nameOffset
+	mov edi, OFFSET baseUnit
+	mov ecx, 11				; size of name buffers
+	rep movsb				; moves the name into the baseUnit name
+
+	mGetUnitField OFFSET baseUnit, roleID
+	mov dl, role			; saves given role
+	mov BYTE PTR [eax], dl	; assigns roleID to unit
+	INVOKE SetRole, ADDR baseUnit	; initializes its stats with new role
+	ret
+CreateUnit ENDP
 END
