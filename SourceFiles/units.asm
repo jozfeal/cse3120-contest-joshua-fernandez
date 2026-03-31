@@ -33,9 +33,13 @@ InitializeUnits PROC
 	mAllyUnit ally1, "Sylvain", WARRIOR, 0
 	mAllyUnit ally2, "Dimitri", KNIGHT, 1
 	mAllyUnit ally3, "Ashe", ARCHER, 2
-	mEnemyUnit enemy1, "Bernie", ARCHER, 0
-	mEnemyUnit enemy2, "Caspar", WARRIOR, 1
-;	mEnemyUnit enemy3, "Edelgard", KNIGHT, 2
+
+	INVOKE CreateUnit, ADDR enemy1Name, ARCHER		; create and place each of the default enemy units for the demo
+	INVOKE MoveUnit, ADDR baseUnit, ENEMY, 0
+
+	INVOKE CreateUnit, ADDR enemy2Name, WARRIOR
+	INVOKE MoveUnit, ADDR baseUnit, ENEMY, 1
+
 	INVOKE CreateUnit, ADDR enemy3Name, KNIGHT
 	INVOKE MoveUnit, ADDR baseUnit, ENEMY, 2
 
@@ -274,8 +278,11 @@ MoveUnit PROC USES eax edx ecx esi edi, unitOffset:DWORD, team:BYTE, position:BY
 	.ELSEIF (dl == ENEMY)			; places unit in enemy team offset
 		lea edi, enemies
 	.ENDIF
+
 	mov ecx, 0						; clear ecx
-	mov cl, position				; iterate for once for each position 
+	mov cl, position				; iterate for once for each position
+	inc ecx							; makes iteration consistent with position amount
+	sub edi, SIZEOF UNIT			; necessary for offset correction
 	IncreaseOffset:
 		add edi, SIZEOF UNIT		; skip one unit in the team position
 		loop IncreaseOffset
