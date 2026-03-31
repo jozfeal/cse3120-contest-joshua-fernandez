@@ -15,11 +15,11 @@ warriorStats BYTE 55, 25, 15, 10
 archerStats BYTE 35, 32, 12, 13
 knightStats BYTE 65, 21, 20, 6
 
-; role names for each of the classes
-noRoleName BYTE "No Role"			; failsafe
-warriorName BYTE "Warrior"
-archerName BYTE "Archer"
-knightName BYTE "Knight"
+; role names for each of the classes, wih trailing 0's up to 11 chars
+noRoleName BYTE "No Role", 4 DUP(0)		; failsafe
+warriorName BYTE "Warrior", 4 DUP(0)
+archerName BYTE "Archer", 5 DUP(0)
+knightName BYTE "Knight", 5 DUP(0)
 
 .code
 InitializeUnits PROC
@@ -187,6 +187,11 @@ SetRole PROC USES edx ecx, unitOffset:DWORD
 	.ELSE						; failsafe, puts no role
 		mov esi, OFFSET noRoleName
 	.ENDIF
+
+	mGetUnitField unitOffset, role
+	mov edi, eax				; puts the destination for the role name
+	mov	ecx, 11					; size of name buffers
+	rep movsb
 	ret
 SetRole ENDP
 END
