@@ -153,28 +153,50 @@ PromptChoice PROC USES edx
 PromptChoice ENDP
 
 ; ------------------------------
-ChooseTarget PROC USES edx
+ChooseTarget PROC USES edx ecx
 ; Takes no parameters
 ; Returns the offset of the target selected in EAX
 ; ------------------------------
 	mGotoxy 0, BOXROW		; start of user entry box
 	mWriteLn "Choose a target:"
 
-	mWrite"> "				; starts with the first enemy selected
+	mov ecx, 0				; tracks how many enemy units are alive / valid targets
+	
 	mGetUnit ENEMY, 0
-	INVOKE WriteName, eax	; puts the enemy as a choice
-	call Crlf				; new line not included in WriteName
-	 
-	mWrite"  "
+	mGetUnitField eax, curHealth
+	mov dl, BYTE PTR [eax]		; get health of unit
+	.IF (dl != 0)				; only give choice if unit is alive
+		mWrite"  "				; starts with the first enemy selected
+		mGetUnit ENEMY, 0
+		INVOKE WriteName, eax	; puts the enemy as a choice
+		call Crlf				; new line not included in WriteName
+		inc cl					; count up how many units are being shown
+	.ENDIF
+
 	mGetUnit ENEMY, 1
-	INVOKE WriteName, eax	; puts the enemy as a choice
-	call Crlf
-	mWrite"  "
+	mGetUnitField eax, curHealth
+	mov dl, BYTE PTR [eax]		; get health of unit
+	.IF (dl != 0)				; only give choice if unit is alive
+		mWrite"  "
+		mGetUnit ENEMY, 1
+		INVOKE WriteName, eax	; puts the enemy as a choice
+		call Crlf
+		inc cl					; count up how many units are being shown
+	.ENDIF
+
 	mGetUnit ENEMY, 2
-	INVOKE WriteName, eax	; puts the enemy as a choice
-	call Crlf
+	mGetUnitField eax, curHealth
+	mov dl, BYTE PTR [eax]		; get health of unit
+	.IF (dl != 0)				; only give choice if unit is alive
+		mWrite"  "
+		mGetUnit ENEMY, 2
+		INVOKE WriteName, eax	; puts the enemy as a choice
+		call Crlf
+		inc cl					; count up how many units are being shown
+	.ENDIF
 
 	mov dl, 1				; default choice is first enemy
+	mPlaceCharForChoice ">", dl	; marks first enemy as selected
 	WaitForConfirm:
 		call GetInput		; get a player input
 
@@ -188,11 +210,11 @@ ChooseTarget PROC USES edx
 		.ELSEIF (ah == UP)			; moves cursor up
 			dec dl
 			.IF (dl < 1)			; wraps around if scrolls above options
-				mov dl, 3
+				mov dl, cl
 			.ENDIF
 		.ELSEIF (ah == DOWN)		; moves cursor down
 			inc dl
-			.IF (dl > 3)			; wraps around if scrolls below options
+			.IF (dl > cl)			; wraps around if scrolls below options
 				mov dl, 1
 			.ENDIF
 		.ENDIF
