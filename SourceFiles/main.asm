@@ -67,6 +67,7 @@ Main PROC PUBLIC
 			
 			inc ecx
 			mCheckEnd
+			call PrintUnits
 		.ENDW
 
 		mov ecx, 0					; enemy turn
@@ -79,6 +80,7 @@ Main PROC PUBLIC
 
 			inc ecx
 			mCheckEnd
+			call PrintUnits
 		.ENDW
 	.UNTIL (0)						; infinite loop since game end logic is inside loop
 
