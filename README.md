@@ -22,6 +22,7 @@
   - Spell: Does nothing as of this version of the game, simply skips your turn.
 
 ## How to Compile and Run
+- The game is playable no matter what, but for the best experience please play with the default size of 120x30 command line window. To make sure that your command line launches in 120x30, open a new command line window, and press the downward arrow next to the tab on top and select Settings. Scroll down to Launch Options and set the Columns = 120 and Rows = 30.
 - This project compiles using Visual Studio 15, all you must do is open the AssemblyContest.sln file, where you can build and run it from.
 - If you wish to compile and run in the command line, open the provided compile.bat file and modify the paths. The current paths work for my computer but may not for yours.
 - If you do not know how to find the correct paths for you, refer to the assingment at the start of the semester: "Lab Start - Configuring Windows Command-Line Compilers".
