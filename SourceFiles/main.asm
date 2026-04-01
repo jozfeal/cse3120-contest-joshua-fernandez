@@ -60,10 +60,7 @@ cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, l
 
 .code
 Main PROC PUBLIC
-	mSetCursor
-	mPrintLine
-	call GetInput
-
+	call CharacterCreation	; have user create ally team
 	mSetCursor FALSE		; disable cursor for the rest of the game
 
 	call Randomize			; gets a new random seed for the rng
@@ -317,4 +314,20 @@ CheckCombatEnd PROC USES eax ecx
 	ret
 CheckCombatEnd ENDP
 
+; ------------------------------
+CharacterCreation PROC USES eax ecx
+; Takes no parameters
+; Prompts user to create all 3 ally team characters
+; ------------------------------
+	mSetCursor				; enable cursor initially
+	mPrintLine
+	mGotoxy 0, BOXROW
+	mov ecx, 0
+	.WHILE (ecx <= 2)
+		
+		inc ecx
+	.ENDW
+
+	ret
+CharacterCreation ENDP
 END Main
