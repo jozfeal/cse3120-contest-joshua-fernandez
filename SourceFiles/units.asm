@@ -29,11 +29,6 @@ knightName BYTE "Knight", 5 DUP(0)
 
 .code
 InitializeUnits PROC
-	; Initializes constant characters to test with for each team
-;	mAllyUnit ally1, "Sylvain", WARRIOR, 0
-;	mAllyUnit ally2, "Dimitri", KNIGHT, 1
-;	mAllyUnit ally3, "Ashe", ARCHER, 2
-
 	INVOKE CreateUnit, ADDR enemy1Name, ARCHER		; create and place each of the default enemy units for the demo
 	INVOKE MoveUnit, eax, ENEMY, 0
 
