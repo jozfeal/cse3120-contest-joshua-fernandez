@@ -319,17 +319,32 @@ CharacterCreation PROC USES eax ecx
 ; Takes no parameters
 ; Prompts user to create all 3 ally team characters
 ; ------------------------------
-		LOCAL showWarning:DWORD		; boolean for showing character warning
+		LOCAL showWarning:DWORD							; boolean for showing character warning
+;		LOCAL bufferInfo:CONSOLE_SCREEN_BUFFER_INFO		; used to check for current cursor position
+;		LOCAL creatorName[11]:BYTE						; name used in character creator 
+;		LOCAL creatorRoleID:BYTE						; role used in character creator
+		LOCAL windowHandle:Handle						; handle used for creator
+	
 	mov showWarning, FALSE			; do not show character warning initially
+	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+	mov windowHandle,eax			; get window handle
 	mPrintLine
 	mov ecx, 0
 	.WHILE (ecx <= 2)
-		mGotoxy 0, BOXROW
-		mWrite "Enter name for this character #"
-		mov eax, ecx
-		inc eax							; align numbers as 1, 2, 3
-		INVOKE ColorNumber, white, eax	; display unit number
-		mWrite " - "
+		PromptName:
+			mGotoxy 0, BOXROW
+			mWrite "Enter name for this character #"
+			mov eax, ecx
+			inc eax							; align numbers as 1, 2, 3
+			INVOKE ColorNumber, white, eax	; display unit number
+			mWrite " - "
+
+		.IF (showWarning == TRUE)			; user gave a name less than 1 char or more than 10 chars
+			call ResetBox
+			mGotoxy 0, BOXROW+1				; display warning below entering field
+			mWrite "Name has to be between 1-10 characters long."
+			jmp PromptName					; re-do name prompting with warning printed
+		.ENDIF
 
 		mSetCursor			; enable cursor for typing
 			
