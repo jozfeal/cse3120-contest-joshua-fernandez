@@ -319,13 +319,21 @@ CharacterCreation PROC USES eax ecx
 ; Takes no parameters
 ; Prompts user to create all 3 ally team characters
 ; ------------------------------
-	mSetCursor				; enable cursor initially
+		LOCAL showWarning:DWORD		; boolean for showing character warning
+	mov showWarning, FALSE			; do not show character warning initially
 	mPrintLine
-	mGotoxy 0, BOXROW
 	mov ecx, 0
 	.WHILE (ecx <= 2)
-		
-		inc ecx
+		mGotoxy 0, BOXROW
+		mWrite "Enter name for this character #"
+		mov eax, ecx
+		inc eax							; align numbers as 1, 2, 3
+		INVOKE ColorNumber, white, eax	; display unit number
+		mWrite " - "
+
+		mSetCursor			; enable cursor for typing
+			
+		inc ecx			; go to next unit
 	.ENDW
 
 	ret
