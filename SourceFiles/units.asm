@@ -30,18 +30,18 @@ knightName BYTE "Knight", 5 DUP(0)
 .code
 InitializeUnits PROC
 	; Initializes constant characters to test with for each team
-	mAllyUnit ally1, "Sylvain", WARRIOR, 0
-	mAllyUnit ally2, "Dimitri", KNIGHT, 1
-	mAllyUnit ally3, "Ashe", ARCHER, 2
+;	mAllyUnit ally1, "Sylvain", WARRIOR, 0
+;	mAllyUnit ally2, "Dimitri", KNIGHT, 1
+;	mAllyUnit ally3, "Ashe", ARCHER, 2
 
 	INVOKE CreateUnit, ADDR enemy1Name, ARCHER		; create and place each of the default enemy units for the demo
-	INVOKE MoveUnit, ADDR baseUnit, ENEMY, 0
+	INVOKE MoveUnit, eax, ENEMY, 0
 
 	INVOKE CreateUnit, ADDR enemy2Name, WARRIOR
-	INVOKE MoveUnit, ADDR baseUnit, ENEMY, 1
+	INVOKE MoveUnit, eax, ENEMY, 1
 
 	INVOKE CreateUnit, ADDR enemy3Name, KNIGHT
-	INVOKE MoveUnit, ADDR baseUnit, ENEMY, 2
+	INVOKE MoveUnit, eax, ENEMY, 2
 
 	ret
 InitializeUnits ENDP
@@ -244,8 +244,9 @@ SetRole PROC USES eax edx ecx esi edi, unitOffset:DWORD
 SetRole ENDP
 
 ; ------------------------------
-CreateUnit PROC USES eax edx ecx esi edi, nameOffset:DWORD, role:BYTE
+CreateUnit PROC USES edx ecx esi edi, nameOffset:DWORD, role:BYTE
 ; Takes a name and roleID
+; Returns newly created unit in eax
 ; Creates a new instance of a unit with its data in baseUnit
 ; ------------------------------
 	mov esi, nameOffset
@@ -257,6 +258,8 @@ CreateUnit PROC USES eax edx ecx esi edi, nameOffset:DWORD, role:BYTE
 	mov dl, role			; saves given role
 	mov BYTE PTR [eax], dl	; assigns roleID to unit
 	INVOKE SetRole, ADDR baseUnit	; initializes its stats with new role
+
+	mov eax, OFFSET baseUnit		; puts base unit in eax so it can be used by caller procedure
 	ret
 CreateUnit ENDP
 

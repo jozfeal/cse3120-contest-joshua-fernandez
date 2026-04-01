@@ -404,6 +404,10 @@ CharacterCreation PROC USES eax edx ecx esi edi
 
 		RoleChosen:
 		call ResetBox
+		INVOKE CreateUnit, ADDR creatorName, creatorRoleID	; create unit based on input
+		mov esi, eax										; must be done to avoid a parameter passing issue that prevents compilation
+		INVOKE MoveUnit, esi, ALLY, cl						; assign it to the ally team
+
 		inc ecx			; go to next unit
 	.ENDW
 
