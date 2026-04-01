@@ -50,9 +50,11 @@ ENDM
 
 ; sets the cursor visible or invisible 
 mSetCursor MACRO visible:=<TRUE>
+	push ecx		; ecx is modified with these procedures so must be saved
 	mov cursorInfo.bVisible, visible
 	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
 	INVOKE SetConsoleCursorInfo, eax, ADDR cursorInfo	; makes cursor invisible in cmd
+	pop ecx
 ENDM
 
 .data
@@ -319,16 +321,16 @@ creatorName BYTE 11 DUP(0)	; placeholder name used for character creation
 
 .code
 ; ------------------------------
-CharacterCreation PROC USES eax edx ecx
+CharacterCreation PROC USES eax edx ecx esi edi
 ; Takes no parameters
 ; Prompts user to create all 3 ally team characters
 ; ------------------------------
 		LOCAL creatorRoleID:BYTE						; role used in character creato
 	
 	mPrintLine
-	mSetCursor						; enable cursor for typing
 	mov ecx, 0
 	.WHILE (ecx <= 2)
+		mSetCursor							; enable cursor for typing
 		PromptName:
 			mGotoxy 0, BOXROW
 			mWrite "Enter name for character #"
@@ -354,12 +356,23 @@ CharacterCreation PROC USES eax edx ecx
 				mWrite "Name has to be between 1-10 characters long."
 				jmp PromptName				; re-do name prompting with warning printed
 			.ENDIF
-			call ResetBox	; clear current box from input
+			call ResetBox					; clear current box from input
+			mSetCursor FALSE				; clear cursor for role choice
 
 		mGotoxy 0, BOXROW			; start of user entry box
 		mWrite "Choose a role for "
+
+		mov eax, 0			; clear	eax first
+		call GetTextColor	; get current colors used
+		push eax			; save current colors for restoring later
+		and eax, 11110000	; clears foreground colors bits
+		add eax, lightCyan	; writes name in lightCyan for ally
+		call SetTextColor
 		mov edx, OFFSET creatorName	; show name just given
 		call WriteString
+		pop eax
+		call SetTextColor	; return orinal colo after name
+
 		mWriteLn ":"				; role options currently available
 		mWriteLn "> Warrior"
 		mWriteLn "  Archer"
@@ -390,6 +403,7 @@ CharacterCreation PROC USES eax edx ecx
 		jmp WaitForConfirm
 
 		RoleChosen:
+		call ResetBox
 		inc ecx			; go to next unit
 	.ENDW
 
