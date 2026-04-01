@@ -30,3 +30,4 @@
 `compile.bat`
 - After compilation, run the following command to begin the game:
 `main`
+- **Important Note**: if you return to a previous commit in which compile.bat does not exist, make sure to edit the .asm and .obj options for the ml and link commands to not include files that may not have existed in the repository up to that point.
