@@ -13,7 +13,6 @@ INCLUDE DrawManager.inc
 dashedLine BYTE 120 DUP("-"), 0		; as long as the default window opening size
 
 .code
-
 ; ------------------------------
 ResetScreen PROC USES edx
 ; Does not take any parameters
@@ -21,9 +20,7 @@ ResetScreen PROC USES edx
 ; the template for the game UI
 ; ------------------------------
 	call Clrscr
-	mGotoxy 0, 23
-	mov edx, OFFSET dashedLine
-	call WriteString					; puts a dashed line to divide game screen and prompt screen
+	mPrintLine					; puts a dashed line to divide game screen and prompt screen
 	call PrintUnits
 
 	ret

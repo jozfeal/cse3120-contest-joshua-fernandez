@@ -60,6 +60,10 @@ cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, l
 
 .code
 Main PROC PUBLIC
+	mSetCursor
+	mPrintLine
+	call GetInput
+
 	mSetCursor FALSE		; disable cursor for the rest of the game
 
 	call Randomize			; gets a new random seed for the rng
