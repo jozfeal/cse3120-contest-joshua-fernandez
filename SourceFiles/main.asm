@@ -114,12 +114,14 @@ Main PROC PUBLIC
 	mWrite "Congratulations, you win!"
 	mWaitForConfirm
 	call Clrscr						; clears screen after game is done
+	mSetCursor						; restores cursor after game
 	INVOKE ExitProcess, 0
 
 	EnemyWin:						; display loss message and quit game
 	mWrite "Oh no, you lost!"
 	mWaitForConfirm
 	call Clrscr						; clears screen after game is done
+	mSetCursor						; restores cursor after game
 	INVOKE ExitProcess,0
 Main ENDP
 
