@@ -48,14 +48,20 @@ mCheckEnd MACRO
 	.ENDIF
 ENDM
 
+; sets the cursor visible or invisible 
+mSetCursor MACRO visible:=<TRUE>
+	mov cursorInfo.bVisible, visible
+	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+	INVOKE SetConsoleCursorInfo, eax, ADDR cursorInfo	; makes cursor invisible in cmd
+ENDM
+
 .data
 cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, learnt in Ch 11.1.10
 
 .code
 Main PROC PUBLIC
-	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
-	INVOKE SetConsoleCursorInfo, eax, ADDR cursorInfo	; makes cursor invisible in cmd
-	
+	mSetCursor FALSE		; disable cursor for the rest of the game
+
 	call Randomize			; gets a new random seed for the rng
 	call InitializeUnits	; initializes basic units to use
 	
