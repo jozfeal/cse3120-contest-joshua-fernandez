@@ -323,13 +323,8 @@ CharacterCreation PROC USES eax edx ecx
 ; Takes no parameters
 ; Prompts user to create all 3 ally team characters
 ; ------------------------------
-		LOCAL showWarning:DWORD							; boolean for showing character warning
-;		LOCAL creatorRoleID:BYTE						; role used in character creator
-		LOCAL windowHandle:Handle						; handle used for creator
+		LOCAL creatorRoleID:BYTE						; role used in character creato
 	
-	mov showWarning, FALSE			; do not show character warning initially
-	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
-	mov windowHandle,eax			; get window handle
 	mPrintLine
 	mSetCursor						; enable cursor for typing
 	mov ecx, 0
@@ -359,8 +354,42 @@ CharacterCreation PROC USES eax edx ecx
 				mWrite "Name has to be between 1-10 characters long."
 				jmp PromptName				; re-do name prompting with warning printed
 			.ENDIF
-			
-		call ResetBox	; clear current box from input
+			call ResetBox	; clear current box from input
+
+		mGotoxy 0, BOXROW			; start of user entry box
+		mWrite "Choose a role for "
+		mov edx, OFFSET creatorName	; show name just given
+		call WriteString
+		mWriteLn ":"				; role options currently available
+		mWriteLn "> Warrior"
+		mWriteLn "  Archer"
+		mWriteLn "  Knight"
+
+		mov dl, WARRIOR			; default choice is attack
+		WaitForConfirm:
+			call GetInput		; get a player input
+
+			mPlaceCharForChoice " ", dl	; removes old player selection
+
+			.IF (ah == CONFIRM)			; returns current choice selection
+				mov creatorRoleID, dl
+				jmp RoleChosen
+			.ELSEIF (ah == UP)			; moves cursor up
+				dec dl
+				.IF (dl < ATTACK)		; wraps around if scrolls above options
+					mov dl, KNIGHT
+				.ENDIF
+			.ELSEIF (ah == DOWN)		; moves cursor down
+				inc dl
+				.IF (dl > KNIGHT)		; wraps around if scrolls below options
+					mov dl, WARRIOR
+				.ENDIF
+			.ENDIF
+
+			mPlaceCharForChoice ">", dl	; highlights new player choice
+		jmp WaitForConfirm
+
+		RoleChosen:
 		inc ecx			; go to next unit
 	.ENDW
 
