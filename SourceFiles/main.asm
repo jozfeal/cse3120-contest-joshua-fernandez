@@ -62,10 +62,11 @@ cursorInfo CONSOLE_CURSOR_INFO <25, FALSE>	; used to set the cursor invisible, l
 
 .code
 Main PROC PUBLIC
+	call Randomize			; gets a new random seed for the rng
+	call Clrscr				; clears everything before starting the game
 	call CharacterCreation	; have user create ally team
 	mSetCursor FALSE		; disable cursor for the rest of the game
 
-	call Randomize			; gets a new random seed for the rng
 	call InitializeUnits	; initializes basic units to use
 	
 	.REPEAT
@@ -112,11 +113,13 @@ Main PROC PUBLIC
 	AllyWin:						; display win message and quit game
 	mWrite "Congratulations, you win!"
 	mWaitForConfirm
+	call Clrscr						; clears screen after game is done
 	INVOKE ExitProcess, 0
 
 	EnemyWin:						; display loss message and quit game
 	mWrite "Oh no, you lost!"
 	mWaitForConfirm
+	call Clrscr						; clears screen after game is done
 	INVOKE ExitProcess,0
 Main ENDP
 
